@@ -84,18 +84,18 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
           {/* محتوى المقال بتنسيق احترافي */}
           <div className="max-w-none mb-12">
             {article.content.split('\n').map((paragraph, i) => {
-              // العنوان الرئيسي - ذهبي كبير
+              // العنوان الرئيسي - أصغر
               if (paragraph.startsWith('## ')) {
                 return (
-                  <h2 key={i} className="text-2xl sm:text-3xl font-black mt-10 mb-5 text-gold border-r-4 border-gold pr-4">
+                  <h2 key={i} className="text-xl sm:text-2xl font-black mt-8 mb-4 text-gold border-r-4 border-gold pr-4">
                     {paragraph.replace('## ', '')}
                   </h2>
                 );
               }
-              // العنوان الفرعي - ذهبي
+              // العنوان الفرعي - أصغر
               if (paragraph.startsWith('### ')) {
                 return (
-                  <h3 key={i} className="text-xl sm:text-2xl font-bold mt-8 mb-4 text-gold/90">
+                  <h3 key={i} className="text-lg sm:text-xl font-bold mt-6 mb-3 text-gold/90">
                     {paragraph.replace('### ', '')}
                   </h3>
                 );
@@ -110,23 +110,23 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
                   </blockquote>
                 );
               }
-              // القوائم المرقمة - علامة ذهبية
+              // القوائم المرقمة - ذهبية اللون وحجم أكبر
               if (paragraph.match(/^\d\./)) {
                 return (
-                  <li key={i} className="mr-6 mb-3 text-lg text-gray-700 dark:text-gray-300 list-decimal marker:text-gold marker:font-bold leading-relaxed">
+                  <li key={i} className="mr-6 mb-4 text-xl sm:text-2xl text-gold dark:text-gold list-decimal marker:text-gold marker:font-bold leading-relaxed">
                     {paragraph.replace(/^\d\.\s*/, '')}
                   </li>
                 );
               }
-              // القوائم النقطية - نقطة ذهبية
+              // القوائم النقطية - ذهبية اللون وحجم أكبر
               if (paragraph.startsWith('- ')) {
                 return (
-                  <li key={i} className="mr-6 mb-3 text-lg text-gray-700 dark:text-gray-300 list-disc marker:text-gold leading-relaxed">
+                  <li key={i} className="mr-6 mb-4 text-xl sm:text-2xl text-gold dark:text-gold list-disc marker:text-gold leading-relaxed">
                     {paragraph.replace('- ', '')}
                   </li>
                 );
               }
-              // نص عادي - حجم أكبر
+              // نص عادي
               if (paragraph.trim()) {
                 return (
                   <p key={i} className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-loose mb-5">
