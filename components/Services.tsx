@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { services } from "@/lib/data";
 import { FiCheck } from "react-icons/fi";
-import Image from "next/image";
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,10 +26,12 @@ const cardVariants = {
 export default function Services() {
   return (
     <section id="services" className="py-16 sm:py-20 md:py-28 bg-cream dark:bg-navy relative overflow-hidden">
+      {/* زخارف الخلفية */}
       <div className="absolute top-0 right-0 w-48 sm:w-72 h-48 sm:h-72 bg-gold/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-gold/3 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* رأس القسم */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,6 +50,7 @@ export default function Services() {
           </p>
         </motion.div>
 
+        {/* شبكة الخدمات */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -68,24 +71,31 @@ export default function Services() {
                   
                   {/* صورة الخدمة */}
                   <div className="relative h-40 sm:h-44 md:h-48 overflow-hidden bg-navy-light">
-                    <div className="w-full h-full flex items-center justify-center text-gold/20 text-5xl sm:text-6xl font-black">
-                      {service.title.charAt(0)}
-                    </div>
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
 
+                  {/* محتوى البطاقة */}
                   <div className="p-4 sm:p-6 md:p-8 flex flex-col flex-grow">
+                    {/* الأيقونة */}
                     <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gold/10 flex items-center justify-center mb-4 sm:mb-5 group-hover:bg-gold group-hover:text-navy transition-all duration-500 -mt-8 sm:-mt-10 relative z-10">
                       <Icon className="text-gold text-xl sm:text-2xl group-hover:text-navy transition-colors duration-500" />
                     </div>
 
+                    {/* العنوان */}
                     <h3 className="text-lg sm:text-xl font-bold text-navy dark:text-white mb-2 sm:mb-3 group-hover:text-gold transition-colors duration-300">
                       {service.title}
                     </h3>
 
+                    {/* الوصف */}
                     <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-5 flex-grow">
                       {service.description}
                     </p>
 
+                    {/* قائمة المميزات */}
                     <ul className="space-y-1.5 sm:space-y-2">
                       {service.features.map((feature, i) => (
                         <motion.li
@@ -107,6 +117,7 @@ export default function Services() {
           })}
         </motion.div>
 
+        {/* دعوة لاتخاذ إجراء */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
