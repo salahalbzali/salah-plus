@@ -6,6 +6,7 @@ import Portfolio from "@/components/Portfolio";
 import Blog from "@/components/Blog";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function HomePage() {
   return (
@@ -20,6 +21,7 @@ export default function HomePage() {
         <Contact />
       </main>
       <Footer />
+      <ScrollToTop />
     </>
   );
 }
