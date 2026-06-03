@@ -11,21 +11,21 @@ const footerLinks = [
   {
     title: "روابط سريعة",
     links: [
-      { label: "الرئيسية", href: "#home" },
-      { label: "الخدمات", href: "#services" },
-      { label: "أعمالنا", href: "#portfolio" },
-      { label: "المدونة", href: "#blog" },
-      { label: "تواصل معنا", href: "#contact" },
+      { label: "الرئيسية", href: "/#home" },
+      { label: "الخدمات", href: "/#services" },
+      { label: "أعمالنا", href: "/#portfolio" },
+      { label: "المدونة", href: "/#blog" },
+      { label: "تواصل معنا", href: "/#contact" },
     ],
   },
   {
     title: "خدماتنا",
     links: [
-      { label: "التصميم الجرافيكي", href: "#services" },
-      { label: "الهويات البصرية", href: "#services" },
-      { label: "العروض التقديمية", href: "#services" },
-      { label: "حلول الذكاء الاصطناعي", href: "#services" },
-      { label: "الدعم التقني", href: "#services" },
+      { label: "التصميم الجرافيكي", href: "/#services" },
+      { label: "الهويات البصرية", href: "/#services" },
+      { label: "العروض التقديمية", href: "/#services" },
+      { label: "حلول الذكاء الاصطناعي", href: "/#services" },
+      { label: "الدعم التقني", href: "/#services" },
     ],
   },
 ];
