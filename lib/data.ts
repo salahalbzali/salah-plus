@@ -51,7 +51,7 @@ export const services: Service[] = [
     title: "التصميم الجرافيكي",
     description: "تصاميم إبداعية احترافية تشمل المنشورات، البروشورات، البنرات، والمواد التسويقية بجودة عالية.",
     icon: FiPenTool,
-    image: "/services/graphic-design.webp",
+    image: "/services/graphic-design.jpg",
     features: ["تصميم منشورات السوشيال ميديا", "تصميم البروشورات والكتيبات", "البانرات الإعلانية", "تغطية الفعاليات"],
   },
   {
