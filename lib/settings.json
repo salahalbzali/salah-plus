@@ -1,0 +1,14 @@
+{
+  "available": true,
+  "stats": {
+    "projects": 500,
+    "clients": 300,
+    "services": 7
+  },
+  "workHours": {
+    "start": "09:00",
+    "end": "18:00",
+    "days": "السبت - الخميس",
+    "fridayClosed": true
+  }
+}
