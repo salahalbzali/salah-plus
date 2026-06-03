@@ -18,8 +18,8 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
   if (!article) notFound();
 
   const currentIndex = articles.findIndex((a) => a.id === params.id);
-  const prevArticle = articles[currentIndex + 1] || null;
-  const nextArticle = articles[currentIndex - 1] || null;
+  const nextArticle = articles[currentIndex + 1] || null;
+  const prevArticle = articles[currentIndex - 1] || null;
 
   const shareUrl = `https://salah-plus-l7lb.vercel.app/blog/${article.id}`;
 
