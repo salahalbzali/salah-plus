@@ -7,11 +7,11 @@ import { FiMenu, FiX } from "react-icons/fi";
 import ThemeToggle from "./ThemeToggle";
 
 const navLinks = [
-  { href: "#home", label: "الرئيسية" },
-  { href: "#services", label: "الخدمات" },
-  { href: "#portfolio", label: "أعمالنا" },
-  { href: "#blog", label: "المدونة" },
-  { href: "#contact", label: "تواصل معنا" },
+  { href: "/#home", label: "الرئيسية" },
+  { href: "/#services", label: "الخدمات" },
+  { href: "/#portfolio", label: "أعمالنا" },
+  { href: "/#blog", label: "المدونة" },
+  { href: "/#contact", label: "تواصل معنا" },
 ];
 
 export default function Navbar() {
