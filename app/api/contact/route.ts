@@ -3,18 +3,16 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, subject, message, turnstileToken } = body;
+    const { name, email, subject, message } = body;
 
-    console.log("Received:", { name, email, subject, turnstileToken: turnstileToken ? "Present" : "Missing" });
-
-    // إرسال مباشر عبر EmailJS
     const emailjsRes = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         service_id: "service_yygh4dj",
         template_id: "template_0n382af",
-        user_id: "j766og8IrXhks3sKC",
+        user_id: process.env.EMAILJS_PRIVATE_KEY || "j766og8IrXhks3sKC",
+        accessToken: process.env.EMAILJS_PRIVATE_KEY || "j766og8IrXhks3sKC",
         template_params: {
           from_name: name,
           from_email: email,
@@ -24,16 +22,13 @@ export async function POST(request: Request) {
       }),
     });
 
-    const responseText = await emailjsRes.text();
-    console.log("EmailJS Response:", responseText);
-
     if (!emailjsRes.ok) {
-      return NextResponse.json({ error: responseText }, { status: 500 });
+      const errorText = await emailjsRes.text();
+      return NextResponse.json({ error: errorText }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Error:", error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
