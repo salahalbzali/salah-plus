@@ -16,7 +16,6 @@ export default function Stats() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // جلب الإحصائيات من API
         const res = await fetch("/api/settings");
         const data = await res.json();
         if (data.stats) {
@@ -26,49 +25,74 @@ export default function Stats() {
         setStats(prev => ({ ...prev, projects: 500, clients: 300, services: 7 }));
       }
 
-      // جلب وزيادة عدد الزوار
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
       const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
       if (supabaseUrl && supabaseKey) {
-        try {
-          // 1. جلب العدد الحالي
-          const getRes = await fetch(`${supabaseUrl}/rest/v1/visitors?id=eq.1&select=count`, {
-            headers: {
-              "apikey": supabaseKey,
-              "Authorization": `Bearer ${supabaseKey}`,
-            },
-          });
-          
-          const getData = await getRes.json();
-          const currentCount = getData[0]?.count || 0;
-          const newCount = currentCount + 1;
+        // 👈 تحقق إذا كان هذا المتصفح زار من قبل
+        const hasVisited = localStorage.getItem("salah-has-visited");
 
-          // 2. تحديث العدد
-          await fetch(`${supabaseUrl}/rest/v1/visitors?id=eq.1`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              "apikey": supabaseKey,
-              "Authorization": `Bearer ${supabaseKey}`,
-              "Prefer": "return=representation",
-            },
-            body: JSON.stringify({ count: newCount }),
-          });
+        if (!hasVisited) {
+          // زائر جديد - زيادة العداد
+          try {
+            const getRes = await fetch(
+              `${supabaseUrl}/rest/v1/visitors?select=count&id=eq.1`,
+              {
+                headers: {
+                  "apikey": supabaseKey,
+                  "Authorization": `Bearer ${supabaseKey}`,
+                },
+              }
+            );
+            
+            const getData = await getRes.json();
+            const currentCount = getData?.[0]?.count || 0;
+            const newCount = currentCount + 1;
 
-          setStats(prev => ({ ...prev, visitors: newCount }));
-        } catch (error) {
-          // احتياطي: localStorage
-          const stored = localStorage.getItem("salah-visitor-count");
-          const current = stored ? parseInt(stored) + 1 : 1;
-          localStorage.setItem("salah-visitor-count", current.toString());
-          setStats(prev => ({ ...prev, visitors: current }));
+            await fetch(`${supabaseUrl}/rest/v1/visitors?id=eq.1`, {
+              method: "PATCH",
+              headers: {
+                "apikey": supabaseKey,
+                "Authorization": `Bearer ${supabaseKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ count: newCount }),
+            });
+
+            // 👈 علم هذا المتصفح كزائر سابق
+            localStorage.setItem("salah-has-visited", "true");
+            
+            setStats(prev => ({ ...prev, visitors: newCount }));
+          } catch (error) {
+            const stored = localStorage.getItem("salah-visitor-count");
+            const current = stored ? parseInt(stored) : 0;
+            setStats(prev => ({ ...prev, visitors: current }));
+          }
+        } else {
+          // زائر سابق - جلب العدد فقط
+          try {
+            const getRes = await fetch(
+              `${supabaseUrl}/rest/v1/visitors?select=count&id=eq.1`,
+              {
+                headers: {
+                  "apikey": supabaseKey,
+                  "Authorization": `Bearer ${supabaseKey}`,
+                },
+              }
+            );
+            
+            const getData = await getRes.json();
+            const currentCount = getData?.[0]?.count || 0;
+            setStats(prev => ({ ...prev, visitors: currentCount }));
+          } catch (error) {
+            const stored = localStorage.getItem("salah-visitor-count");
+            const current = stored ? parseInt(stored) : 0;
+            setStats(prev => ({ ...prev, visitors: current }));
+          }
         }
       } else {
-        // بدون Supabase: localStorage
         const stored = localStorage.getItem("salah-visitor-count");
-        const current = stored ? parseInt(stored) + 1 : 1;
-        localStorage.setItem("salah-visitor-count", current.toString());
+        const current = stored ? parseInt(stored) : 0;
         setStats(prev => ({ ...prev, visitors: current }));
       }
 
