@@ -117,23 +117,20 @@ export default function Contact() {
     setStatus("sending");
 
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formState.name,
-          email: formState.email,
+      // 👈 إرسال مباشر عبر EmailJS SDK
+      const emailjs = (await import("@emailjs/browser")).default;
+      
+      await emailjs.send(
+        "service_yygh4dj",
+        "template_0n382af",
+        {
+          from_name: formState.name,
+          from_email: formState.email,
           subject: formState.subject,
           message: formState.message,
-          turnstileToken,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "حدث خطأ في الإرسال");
-      }
+        },
+        "j766og8IrXhks3sKC"
+      );
 
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
@@ -143,9 +140,9 @@ export default function Contact() {
       }
       
       setTimeout(() => setStatus("idle"), 5000);
-    } catch (error) {
+    } catch (error: any) {
       setStatus("error");
-      setErrorMessage(error instanceof Error ? error.message : "فشل الإرسال، حاول مرة أخرى");
+      setErrorMessage(error?.text || error?.message || "فشل الإرسال، حاول مرة أخرى");
       setTimeout(() => {
         setStatus("idle");
         setErrorMessage("");
