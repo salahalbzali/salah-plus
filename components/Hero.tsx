@@ -149,22 +149,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 sm:gap-2"
-      >
-        <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
-          اسحب للأسفل
-        </span>
-        <div className="w-5 h-8 sm:w-6 sm:h-10 rounded-full border-2 border-gold/30 flex items-start justify-center p-1">
-          <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-1 h-2 sm:w-1.5 sm:h-3 bg-gold rounded-full"
-          />
-        </div>
-      </motion.div>
+      
     </section>
   );
 }
