@@ -47,14 +47,22 @@ export default function Contact() {
     e.preventDefault();
     if (!formRef.current) return;
 
+    // 👈 التحقق من Turnstile
+    const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
+    if (!turnstileToken) {
+      alert("الرجاء إكمال التحقق الأمني");
+      return;
+    }
+
     setStatus("sending");
 
     try {
+      // 👈 استخدام متغيرات البيئة بدل المفاتيح المكشوفة
       await emailjs.sendForm(
-        "service_yygh4dj",
-        "template_0n382af",
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
         formRef.current,
-        "j766og8IrXhks3sKC"
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
       );
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
@@ -165,6 +173,9 @@ export default function Contact() {
                 placeholder="اكتب رسالتك هنا..."
               />
             </div>
+
+            {/* 👈 Turnstile Widget */}
+            <div className="cf-turnstile" data-sitekey="0x4AAAAAADetE7Omp726aW1x"></div>
 
             <motion.button
               type="submit"
