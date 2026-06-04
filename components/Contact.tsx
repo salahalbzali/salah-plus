@@ -6,7 +6,6 @@ import { FiMail, FiPhone, FiMapPin, FiSend, FiFacebook, FiInstagram, FiCheckCirc
 import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 import { socialLinks } from "@/lib/data";
-import emailjs from "@emailjs/browser";
 import WorkHours from "./WorkHours";
 
 export default function Contact() {
@@ -43,7 +42,6 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formRef.current) return;
 
     const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
     if (!turnstileToken) {
@@ -54,12 +52,21 @@ export default function Contact() {
     setStatus("sending");
 
     try {
-      await emailjs.sendForm(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_yygh4dj",
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_0n382af",
-        formRef.current,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "j766og8IrXhks3sKC"
-      );
+      // 👈 الإرسال عبر API Route (الخادم)
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formState.name,
+          email: formState.email,
+          subject: formState.subject,
+          message: formState.message,
+          turnstileToken,
+        }),
+      });
+
+      if (!res.ok) throw new Error("فشل الإرسال");
+
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
       setTimeout(() => setStatus("idle"), 5000);
