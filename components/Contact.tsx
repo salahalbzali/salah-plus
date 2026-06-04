@@ -32,15 +32,27 @@ export default function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
-  
-  
+  const [turnstileReady, setTurnstileReady] = useState(false);
 
-  // 2. كشف الأجهزة المحمولة
+  // 1. كشف الأجهزة المحمولة
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // 2. تحميل Turnstile
+  useEffect(() => {
+    const checkTurnstile = setInterval(() => {
+      const widget = document.querySelector('.cf-turnstile');
+      if (widget) {
+        setTurnstileReady(true);
+        clearInterval(checkTurnstile);
+      }
+    }, 500);
+    
+    return () => clearInterval(checkTurnstile);
   }, []);
 
   // 3. إخفاء شريط التنقل السفلي عند فتح لوحة المفاتيح (للموبايل)
@@ -87,20 +99,22 @@ export default function Contact() {
     e.preventDefault();
     setErrorMessage("");
 
-    
+    if (!turnstileReady) {
+      setErrorMessage("جاري تحميل التحقق الأمني، انتظر قليلاً");
+      return;
+    }
 
     const turnstileInput = document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
     const turnstileToken = turnstileInput?.value;
     
     if (!turnstileToken) {
-      setErrorMessage("الرجاء إكمال التحقق الأمني (انقر على المربع)");
+      setErrorMessage("الرجاء إكمال التحقق الأمني");
       return;
     }
 
     setStatus("sending");
 
     try {
-      // 👈 إرسال مباشر عبر EmailJS SDK
       const emailjs = (await import("@emailjs/browser")).default;
       
       await emailjs.send(
@@ -109,7 +123,7 @@ export default function Contact() {
         {
           from_name: formState.name,
           from_email: formState.email,
-          subject: formState.subject,
+          title: formState.subject,
           message: formState.message,
         },
         "j766og8IrXhks3sKC"
@@ -125,7 +139,7 @@ export default function Contact() {
       setTimeout(() => setStatus("idle"), 5000);
     } catch (error: any) {
       setStatus("error");
-      setErrorMessage(error?.text || error?.message || "فشل الإرسال، حاول مرة أخرى");
+      setErrorMessage(error?.text || error?.message || "فشل الإرسال");
       setTimeout(() => {
         setStatus("idle");
         setErrorMessage("");
