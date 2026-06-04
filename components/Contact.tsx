@@ -32,22 +32,8 @@ export default function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
-  const [turnstileLoaded, setTurnstileLoaded] = useState(false);
-
-  // 1. تحميل سكريبت Turnstile ديناميكيًا
-  useEffect(() => {
-    if (document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]')) {
-      setTurnstileLoaded(true);
-      return;
-    }
-    
-    const script = document.createElement("script");
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => setTurnstileLoaded(true);
-    document.head.appendChild(script);
-  }, []);
+  
+  
 
   // 2. كشف الأجهزة المحمولة
   useEffect(() => {
@@ -101,10 +87,7 @@ export default function Contact() {
     e.preventDefault();
     setErrorMessage("");
 
-    if (!turnstileLoaded) {
-      setErrorMessage("جاري تحميل التحقق الأمني، انتظر قليلاً");
-      return;
-    }
+    
 
     const turnstileInput = document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
     const turnstileToken = turnstileInput?.value;
