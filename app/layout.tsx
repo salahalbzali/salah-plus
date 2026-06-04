@@ -77,8 +77,8 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         
-        {/* 👈 أضف كود تحقق Google Search Console هنا */}
-        <meta name="google-site-verification" content="<meta name="google-site-verification" content="gaD1sbl3GPTI-YUYirBXUwU_78oIV5Xia04wqJTkEIs" />" />
+        {/* Google Search Console */}
+        <meta name="google-site-verification" content="gaD1sbl3GPTI-YUYirBXUwU_78oIV5Xia04wqJTkEIs" />
         
         {/* Turnstile */}
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
