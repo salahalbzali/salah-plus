@@ -68,9 +68,11 @@ export default function Portfolio() {
                 onMouseLeave={() => setHoveredId(null)}
                 className="group relative rounded-2xl overflow-hidden bg-navy-gradient cursor-pointer aspect-[4/3]"
               >
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-navy-light to-navy-lighter text-3xl sm:text-4xl text-gold/30 font-black">
-                  {item.title.charAt(0)}
-                </div>
+                <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
 
                 <motion.div
                   animate={{ opacity: hoveredId === item.id ? 1 : 0 }}
