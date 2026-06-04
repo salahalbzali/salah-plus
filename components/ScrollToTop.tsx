@@ -56,10 +56,10 @@ export default function ScrollToTop() {
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
           style={{ bottom: `${settings.bottom}px` }}
-          className="fixed left-4 sm:left-8 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full
-                     bg-gold-gradient text-navy shadow-lg shadow-gold/20
-                     flex items-center justify-center
-                     hover:shadow-xl transition-shadow duration-300"
+          className="fixed bottom-24 left-4 sm:left-8 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full
+          bg-gold-gradient text-navy shadow-lg shadow-gold/20
+          flex items-center justify-center
+          hover:shadow-xl transition-shadow duration-300"
           aria-label="الرجوع إلى الأعلى"
         >
           <FiArrowUp size={18} />
