@@ -5,14 +5,20 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, email, subject, message } = body;
 
+    const privateKey = process.env.EMAILJS_PRIVATE_KEY;
+
+    if (!privateKey) {
+      return NextResponse.json({ error: "Missing Private Key" }, { status: 500 });
+    }
+
     const emailjsRes = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         service_id: "service_yygh4dj",
         template_id: "template_0n382af",
-        user_id: process.env.EMAILJS_PRIVATE_KEY || "j766og8IrXhks3sKC",
-        accessToken: process.env.EMAILJS_PRIVATE_KEY || "j766og8IrXhks3sKC",
+        user_id: privateKey,
+        accessToken: privateKey,
         template_params: {
           from_name: name,
           from_email: email,
@@ -27,7 +33,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errorText }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: "تم الإرسال بنجاح" });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
