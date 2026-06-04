@@ -2,7 +2,17 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { FiMail, FiPhone, FiMapPin, FiSend, FiFacebook, FiInstagram, FiCheckCircle, FiAlertCircle, FiLoader } from "react-icons/fi";
+import {
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiSend,
+  FiFacebook,
+  FiInstagram,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiLoader,
+} from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 import { socialLinks } from "@/lib/data";
@@ -11,12 +21,14 @@ import WorkHours from "./WorkHours";
 export default function Contact() {
   const formRef = useRef<HTMLFormElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  
   const [formState, setFormState] = useState({
     name: "",
     email: "",
     subject: "",
     message: "",
   });
+  
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
@@ -28,6 +40,7 @@ export default function Contact() {
       setTurnstileLoaded(true);
       return;
     }
+    
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
     script.async = true;
@@ -47,6 +60,7 @@ export default function Contact() {
   // 3. إخفاء شريط التنقل السفلي عند فتح لوحة المفاتيح (للموبايل)
   useEffect(() => {
     if (!isMobile) return;
+    
     const inputs = document.querySelectorAll("input, textarea");
     const handleFocus = () => {
       const bottomBar = document.querySelector(".mobile-bottom-nav") as HTMLElement;
@@ -56,10 +70,12 @@ export default function Contact() {
       const bottomBar = document.querySelector(".mobile-bottom-nav") as HTMLElement;
       if (bottomBar) bottomBar.style.display = "flex";
     };
+    
     inputs.forEach((input) => {
       input.addEventListener("focus", handleFocus);
       input.addEventListener("blur", handleBlur);
     });
+    
     return () => {
       inputs.forEach((input) => {
         input.removeEventListener("focus", handleFocus);
@@ -68,6 +84,7 @@ export default function Contact() {
     };
   }, [isMobile]);
 
+  // تأثيرات التمرير
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -84,14 +101,14 @@ export default function Contact() {
     e.preventDefault();
     setErrorMessage("");
 
-    // انتظر تحميل Turnstile
     if (!turnstileLoaded) {
       setErrorMessage("جاري تحميل التحقق الأمني، انتظر قليلاً");
       return;
     }
 
-    // الحصول على رمز Turnstile
-    const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
+    const turnstileInput = document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
+    const turnstileToken = turnstileInput?.value;
+    
     if (!turnstileToken) {
       setErrorMessage("الرجاء إكمال التحقق الأمني (انقر على المربع)");
       return;
@@ -120,10 +137,11 @@ export default function Contact() {
 
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
-      // إعادة تعيين Turnstile (إذا أردت)
+      
       if (typeof window !== "undefined" && (window as any).turnstile) {
         (window as any).turnstile.reset();
       }
+      
       setTimeout(() => setStatus("idle"), 5000);
     } catch (error) {
       setStatus("error");
@@ -236,12 +254,15 @@ export default function Contact() {
               />
             </div>
 
-            {/* Turnstile widget */}
             <div
               className="cf-turnstile"
               data-sitekey={siteKey}
-              data-theme={typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"}
-            ></div>
+              data-theme={
+                typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
+                  ? "dark"
+                  : "light"
+              }
+            />
 
             {errorMessage && (
               <div className="text-red-500 text-sm flex items-center gap-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-xl">
@@ -300,7 +321,9 @@ export default function Contact() {
             className="lg:col-span-2 space-y-6 sm:space-y-6"
           >
             <div className="bg-cream dark:bg-navy p-6 sm:p-8 rounded-2xl border border-gray-100 dark:border-gray-800">
-              <h3 className="text-lg sm:text-xl font-bold text-navy dark:text-white mb-4 sm:mb-6">معلومات التواصل</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-navy dark:text-white mb-4 sm:mb-6">
+                معلومات التواصل
+              </h3>
               <div className="space-y-3 sm:space-y-4">
                 {[
                   { icon: FiMail, label: "البريد الإلكتروني", value: socialLinks.email, href: `mailto:${socialLinks.email}` },
@@ -317,7 +340,9 @@ export default function Contact() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-xs text-gray-400 mb-0.5">{item.label}</div>
-                      <div className="text-navy dark:text-white font-medium text-xs sm:text-sm truncate">{item.value}</div>
+                      <div className="text-navy dark:text-white font-medium text-xs sm:text-sm truncate">
+                        {item.value}
+                      </div>
                     </div>
                   </a>
                 ))}
@@ -327,7 +352,9 @@ export default function Contact() {
             <WorkHours />
 
             <div className="bg-cream dark:bg-navy p-6 sm:p-8 rounded-2xl border border-gray-100 dark:border-gray-800">
-              <h3 className="text-lg sm:text-xl font-bold text-navy dark:text-white mb-4 sm:mb-6">تابعنا على</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-navy dark:text-white mb-4 sm:mb-6">
+                تابعنا على
+              </h3>
               <div className="flex flex-wrap gap-2 sm:gap-3">
                 {[
                   { icon: FiFacebook, href: socialLinks.facebook, label: "فيسبوك", color: "#1877f2" },
@@ -362,7 +389,6 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        {/* شريط تنقل سفلي للموبايل فقط */}
         <div className="lg:hidden fixed bottom-4 left-4 right-4 bg-white dark:bg-navy rounded-full shadow-lg p-2 z-50 mobile-bottom-nav">
           <div className="flex justify-around items-center">
             <a href="#home" className="flex flex-col items-center p-2 text-gray-500 dark:text-gray-400">
