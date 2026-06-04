@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { FiMail, FiPhone, FiMapPin, FiSend, FiFacebook, FiInstagram, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
+import { FiMail, FiPhone, FiMapPin, FiSend, FiFacebook, FiInstagram, FiCheckCircle, FiAlertCircle, FiLoader } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 import { socialLinks } from "@/lib/data";
@@ -18,41 +18,88 @@ export default function Contact() {
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
+  const [turnstileLoaded, setTurnstileLoaded] = useState(false);
 
+  // 1. تحميل سكريبت Turnstile ديناميكيًا
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+    if (document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]')) {
+      setTurnstileLoaded(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+    script.async = true;
+    script.defer = true;
+    script.onload = () => setTurnstileLoaded(true);
+    document.head.appendChild(script);
+  }, []);
+
+  // 2. كشف الأجهزة المحمولة
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // 3. إخفاء شريط التنقل السفلي عند فتح لوحة المفاتيح (للموبايل)
+  useEffect(() => {
+    if (!isMobile) return;
+    const inputs = document.querySelectorAll("input, textarea");
+    const handleFocus = () => {
+      const bottomBar = document.querySelector(".mobile-bottom-nav") as HTMLElement;
+      if (bottomBar) bottomBar.style.display = "none";
+    };
+    const handleBlur = () => {
+      const bottomBar = document.querySelector(".mobile-bottom-nav") as HTMLElement;
+      if (bottomBar) bottomBar.style.display = "flex";
+    };
+    inputs.forEach((input) => {
+      input.addEventListener("focus", handleFocus);
+      input.addEventListener("blur", handleBlur);
+    });
+    return () => {
+      inputs.forEach((input) => {
+        input.removeEventListener("focus", handleFocus);
+        input.removeEventListener("blur", handleBlur);
+      });
+    };
+  }, [isMobile]);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"]
+    offset: ["start end", "end start"],
   });
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
   const y = useTransform(scrollYProgress, [0, 0.5, 1], [50, 0, -50]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
+    if (errorMessage) setErrorMessage("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
 
+    // انتظر تحميل Turnstile
+    if (!turnstileLoaded) {
+      setErrorMessage("جاري تحميل التحقق الأمني، انتظر قليلاً");
+      return;
+    }
+
+    // الحصول على رمز Turnstile
     const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
     if (!turnstileToken) {
-      alert("الرجاء إكمال التحقق الأمني");
+      setErrorMessage("الرجاء إكمال التحقق الأمني (انقر على المربع)");
       return;
     }
 
     setStatus("sending");
 
     try {
-      // 👈 الإرسال عبر API Route (الخادم)
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,21 +112,35 @@ export default function Contact() {
         }),
       });
 
-      if (!res.ok) throw new Error("فشل الإرسال");
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "حدث خطأ في الإرسال");
+      }
 
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
+      // إعادة تعيين Turnstile (إذا أردت)
+      if (typeof window !== "undefined" && (window as any).turnstile) {
+        (window as any).turnstile.reset();
+      }
       setTimeout(() => setStatus("idle"), 5000);
     } catch (error) {
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 5000);
+      setErrorMessage(error instanceof Error ? error.message : "فشل الإرسال، حاول مرة أخرى");
+      setTimeout(() => {
+        setStatus("idle");
+        setErrorMessage("");
+      }, 5000);
     }
   };
 
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY || "0x4AAAAAADetE7Omp726aW1x";
+
   return (
-    <section 
+    <section
       ref={sectionRef}
-      id="contact" 
+      id="contact"
       className="py-12 sm:py-16 md:py-20 lg:py-28 bg-white dark:bg-navy-lighter relative overflow-hidden"
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -175,7 +236,19 @@ export default function Contact() {
               />
             </div>
 
-            <div className="cf-turnstile" data-sitekey="0x4AAAAAADetE7Omp726aW1x"></div>
+            {/* Turnstile widget */}
+            <div
+              className="cf-turnstile"
+              data-sitekey={siteKey}
+              data-theme={typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"}
+            ></div>
+
+            {errorMessage && (
+              <div className="text-red-500 text-sm flex items-center gap-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-xl">
+                <FiAlertCircle />
+                <span>{errorMessage}</span>
+              </div>
+            )}
 
             <motion.button
               type="submit"
@@ -194,10 +267,7 @@ export default function Contact() {
             >
               {status === "sending" && (
                 <>
-                  <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
+                  <FiLoader className="animate-spin text-base sm:text-lg" />
                   <span className="text-sm sm:text-base">جاري الإرسال...</span>
                 </>
               )}
@@ -292,7 +362,8 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        <div className="lg:hidden fixed bottom-4 left-4 right-4 bg-white dark:bg-navy rounded-full shadow-lg p-2 z-50">
+        {/* شريط تنقل سفلي للموبايل فقط */}
+        <div className="lg:hidden fixed bottom-4 left-4 right-4 bg-white dark:bg-navy rounded-full shadow-lg p-2 z-50 mobile-bottom-nav">
           <div className="flex justify-around items-center">
             <a href="#home" className="flex flex-col items-center p-2 text-gray-500 dark:text-gray-400">
               <span className="text-xs">الرئيسية</span>
