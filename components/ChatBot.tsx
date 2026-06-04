@@ -90,7 +90,7 @@ export default function ChatBot() {
         onClick={() => setOpen(true)}
         className="fixed bottom-24 right-5 z-50 rounded-full bg-gold p-4 text-navy shadow-xl hover:bg-gold-dark transition-all"
       >
-        <FiMessageSquare size={24} />
+        <FiMessageSquare size={18} />
       </button>
 
       {open && (
