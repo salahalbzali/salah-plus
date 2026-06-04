@@ -104,12 +104,10 @@ export default function Contact() {
       return;
     }
 
-    // 👈 إعادة تعيين Turnstile قبل كل إرسال
     if (typeof window !== "undefined" && (window as any).turnstile) {
       (window as any).turnstile.reset();
     }
 
-    // 👈 انتظر حتى يكتمل التحقق
     await new Promise(resolve => setTimeout(resolve, 500));
 
     const turnstileInput = document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
@@ -175,7 +173,7 @@ export default function Contact() {
             لنبدأ <span className="gradient-text">العمل معاً</span>
           </h2>
           <div className="w-16 sm:w-20 h-0.5 bg-gold mx-auto mb-4 sm:mb-6 rounded-full" />
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto px-4">
+          <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 max-w-2xl mx-auto px-4 font-medium">
             هل لديك مشروع في ذهنك؟ دعنا نساعدك في تحويله إلى واقع.
           </p>
         </motion.div>
@@ -251,7 +249,6 @@ export default function Contact() {
               />
             </div>
 
-            {/* 👈 أضف data-action="contact" */}
             <div
               className="cf-turnstile"
               data-sitekey={siteKey}
