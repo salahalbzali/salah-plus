@@ -4,26 +4,74 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { useCountUp } from "@/hooks/useCountUp";
-import { FiBriefcase, FiUsers, FiGrid } from "react-icons/fi";
+import { FiBriefcase, FiUsers, FiGrid, FiEye } from "react-icons/fi";
 
-const icons = [FiBriefcase, FiUsers, FiGrid];
+const icons = [FiBriefcase, FiUsers, FiGrid, FiEye];
 
 export default function Stats() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.3 });
-  const [stats, setStats] = useState({ projects: 0, clients: 0, services: 0 });
+  const [stats, setStats] = useState({ projects: 0, clients: 0, services: 0, visitors: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
+        // جلب الإحصائيات من API
         const res = await fetch("/api/settings");
         const data = await res.json();
         if (data.stats) {
-          setStats(data.stats);
+          setStats(prev => ({ ...prev, ...data.stats }));
         }
       } catch (error) {
-        setStats({ projects: 500, clients: 300, services: 7 });
+        setStats(prev => ({ ...prev, projects: 500, clients: 300, services: 7 }));
       }
+
+      // جلب وزيادة عدد الزوار
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
+      if (supabaseUrl && supabaseKey) {
+        try {
+          // 1. جلب العدد الحالي
+          const getRes = await fetch(`${supabaseUrl}/rest/v1/visitors?id=eq.1&select=count`, {
+            headers: {
+              "apikey": supabaseKey,
+              "Authorization": `Bearer ${supabaseKey}`,
+            },
+          });
+          
+          const getData = await getRes.json();
+          const currentCount = getData[0]?.count || 0;
+          const newCount = currentCount + 1;
+
+          // 2. تحديث العدد
+          await fetch(`${supabaseUrl}/rest/v1/visitors?id=eq.1`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": supabaseKey,
+              "Authorization": `Bearer ${supabaseKey}`,
+              "Prefer": "return=representation",
+            },
+            body: JSON.stringify({ count: newCount }),
+          });
+
+          setStats(prev => ({ ...prev, visitors: newCount }));
+        } catch (error) {
+          // احتياطي: localStorage
+          const stored = localStorage.getItem("salah-visitor-count");
+          const current = stored ? parseInt(stored) + 1 : 1;
+          localStorage.setItem("salah-visitor-count", current.toString());
+          setStats(prev => ({ ...prev, visitors: current }));
+        }
+      } else {
+        // بدون Supabase: localStorage
+        const stored = localStorage.getItem("salah-visitor-count");
+        const current = stored ? parseInt(stored) + 1 : 1;
+        localStorage.setItem("salah-visitor-count", current.toString());
+        setStats(prev => ({ ...prev, visitors: current }));
+      }
+
       setLoading(false);
     }
     fetchData();
@@ -32,11 +80,13 @@ export default function Stats() {
   const projectsCount = useCountUp(stats.projects, 2.5, inView);
   const clientsCount = useCountUp(stats.clients, 2.5, inView);
   const servicesCount = useCountUp(stats.services, 2.5, inView);
+  const visitorsCount = useCountUp(stats.visitors, 2.5, inView);
 
   const statsData = [
-    { id: "projects", count: projectsCount, suffix: "+", label: "مشروع" },
-    { id: "clients", count: clientsCount, suffix: "+", label: "عميل" },
-    { id: "services", count: servicesCount, suffix: "", label: "خدمات متكاملة" },
+    { id: "projects", count: projectsCount, suffix: "+", label: "مشروع", icon: icons[0] },
+    { id: "clients", count: clientsCount, suffix: "+", label: "عميل", icon: icons[1] },
+    { id: "services", count: servicesCount, suffix: "", label: "خدمات متكاملة", icon: icons[2] },
+    { id: "visitors", count: visitorsCount, suffix: "+", label: "زائر", icon: icons[3] },
   ];
 
   if (loading) {
@@ -60,9 +110,9 @@ export default function Stats() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
           {statsData.map((stat, index) => {
-            const Icon = icons[index];
+            const Icon = stat.icon;
             return (
               <motion.div
                 key={stat.id}
@@ -72,20 +122,20 @@ export default function Stats() {
                 transition={{ delay: index * 0.2, duration: 0.6 }}
                 className="relative group"
               >
-                <div className="text-center p-6 sm:p-8 rounded-2xl bg-cream dark:bg-navy border border-gray-100 dark:border-gray-800 hover:border-gold/30 transition-all duration-500">
+                <div className="text-center p-4 sm:p-6 md:p-8 rounded-2xl bg-cream dark:bg-navy border border-gray-100 dark:border-gray-800 hover:border-gold/30 transition-all duration-500">
                   <motion.div
                     whileHover={{ scale: 1.1, rotate: 5 }}
-                    className="w-12 h-12 sm:w-14 md:w-16 mx-auto mb-3 sm:mb-4 rounded-2xl bg-gold/10 flex items-center justify-center"
+                    className="w-10 h-10 sm:w-12 md:w-14 mx-auto mb-3 sm:mb-4 rounded-2xl bg-gold/10 flex items-center justify-center"
                   >
-                    <Icon className="text-gold text-xl sm:text-2xl" />
+                    <Icon className="text-gold text-lg sm:text-xl" />
                   </motion.div>
 
-                  <motion.div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-navy dark:text-white mb-2">
+                  <motion.div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-navy dark:text-white mb-2">
                     <motion.span>{stat.count}</motion.span>
                     {stat.suffix}
                   </motion.div>
 
-                  <div className="text-gray-500 dark:text-gray-400 text-sm sm:text-base md:text-lg font-medium">
+                  <div className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm md:text-base font-medium">
                     {stat.label}
                   </div>
                 </div>
