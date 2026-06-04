@@ -5,7 +5,7 @@ import { FiFacebook, FiInstagram, FiHeart } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 import { socialLinks } from "@/lib/data";
-
+import Image from "next/image";
 
 const footerLinks = [
   {
@@ -49,7 +49,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden">
                 <Image
-                  src="/‏‏logo.png"
+                  src="/public/logo.png"
                   alt="صلاح بلس"
                   fill
                   className="object-cover"
