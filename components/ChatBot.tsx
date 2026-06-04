@@ -9,7 +9,6 @@ type Message = {
 };
 
 const responses: Record<string, string> = {
-const responses: Record<string, string> = {
   // تحيات وترحيب
   "مرحبا": "مرحباً بك في صلاح بلس 👋 كيف يمكنني مساعدتك؟",
   "السلام عليكم": "وعليكم السلام ورحمة الله وبركاته 🌟 أهلاً بك في صلاح بلس!",
