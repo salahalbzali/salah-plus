@@ -21,7 +21,6 @@ export default function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [isMobile, setIsMobile] = useState(false);
 
-  // كشف حجم الشاشة
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -31,7 +30,6 @@ export default function Contact() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // تأثير التمرير
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
@@ -47,7 +45,6 @@ export default function Contact() {
     e.preventDefault();
     if (!formRef.current) return;
 
-    // 👈 التحقق من Turnstile
     const turnstileToken = (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
     if (!turnstileToken) {
       alert("الرجاء إكمال التحقق الأمني");
@@ -57,12 +54,11 @@ export default function Contact() {
     setStatus("sending");
 
     try {
-      // 👈 استخدام متغيرات البيئة بدل المفاتيح المكشوفة
       await emailjs.sendForm(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "service_yygh4dj",
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "template_0n382af",
         formRef.current,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "j766og8IrXhks3sKC"
       );
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
@@ -79,7 +75,6 @@ export default function Contact() {
       id="contact" 
       className="py-12 sm:py-16 md:py-20 lg:py-28 bg-white dark:bg-navy-lighter relative overflow-hidden"
     >
-      {/* خلفية متحركة */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
@@ -103,7 +98,6 @@ export default function Contact() {
         </motion.div>
 
         <div className="grid lg:grid-cols-5 gap-6 md:gap-8 lg:gap-10">
-          {/* نموذج الاتصال */}
           <motion.form
             ref={formRef}
             initial={{ opacity: 0, x: isMobile ? 0 : -40, y: isMobile ? 40 : 0 }}
@@ -174,7 +168,6 @@ export default function Contact() {
               />
             </div>
 
-            {/* 👈 Turnstile Widget */}
             <div className="cf-turnstile" data-sitekey="0x4AAAAAADetE7Omp726aW1x"></div>
 
             <motion.button
@@ -222,7 +215,6 @@ export default function Contact() {
             </motion.button>
           </motion.form>
 
-          {/* معلومات التواصل */}
           <motion.div
             initial={{ opacity: 0, x: isMobile ? 0 : 40, y: isMobile ? 40 : 0 }}
             whileInView={{ opacity: 1, x: 0, y: 0 }}
@@ -255,7 +247,6 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* مواعيد العمل */}
             <WorkHours />
 
             <div className="bg-cream dark:bg-navy p-6 sm:p-8 rounded-2xl border border-gray-100 dark:border-gray-800">
@@ -294,7 +285,6 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        {/* شريط التنقل السريع للجوال */}
         <div className="lg:hidden fixed bottom-4 left-4 right-4 bg-white dark:bg-navy rounded-full shadow-lg p-2 z-50">
           <div className="flex justify-around items-center">
             <a href="#home" className="flex flex-col items-center p-2 text-gray-500 dark:text-gray-400">
