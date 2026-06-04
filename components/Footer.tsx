@@ -5,7 +5,7 @@ import { FiFacebook, FiInstagram, FiHeart } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 import { socialLinks } from "@/lib/data";
-import Image from "next/image";
+
 
 const footerLinks = [
   {
