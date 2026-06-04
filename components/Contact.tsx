@@ -104,11 +104,19 @@ export default function Contact() {
       return;
     }
 
+    // 👈 إعادة تعيين Turnstile قبل كل إرسال
+    if (typeof window !== "undefined" && (window as any).turnstile) {
+      (window as any).turnstile.reset();
+    }
+
+    // 👈 انتظر حتى يكتمل التحقق
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     const turnstileInput = document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
     const turnstileToken = turnstileInput?.value;
     
     if (!turnstileToken) {
-      setErrorMessage("الرجاء إكمال التحقق الأمني");
+      setErrorMessage("الرجاء الانتظار حتى يكتمل التحقق الأمني");
       return;
     }
 
@@ -131,11 +139,6 @@ export default function Contact() {
 
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
-      
-      if (typeof window !== "undefined" && (window as any).turnstile) {
-        (window as any).turnstile.reset();
-      }
-      
       setTimeout(() => setStatus("idle"), 5000);
     } catch (error: any) {
       setStatus("error");
@@ -248,9 +251,11 @@ export default function Contact() {
               />
             </div>
 
+            {/* 👈 أضف data-action="contact" */}
             <div
               className="cf-turnstile"
               data-sitekey={siteKey}
+              data-action="contact"
               data-theme={
                 typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
                   ? "dark"
