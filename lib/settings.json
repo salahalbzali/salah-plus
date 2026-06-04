@@ -10,5 +10,9 @@
     "end": "18:00",
     "days": "السبت - الخميس",
     "fridayClosed": true
-  }
+  },
+  "scrollToTop": {
+    "showAfter": 400,
+    "bottom": 80
+}
 }
