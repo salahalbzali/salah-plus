@@ -76,6 +76,8 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="صلاح بلس" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* 👈 أضف هذا السطر */}
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       </head>
       <body>
         <ThemeProvider
@@ -85,7 +87,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <ChatBot />  {/* 👈 أضف هذا السطر */}
+          <ChatBot />
         </ThemeProvider>
       </body>
     </html>
