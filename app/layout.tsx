@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
+import ChatBot from "@/components/ChatBot";
 
 export const metadata: Metadata = {
   title: "صلاح بلس | حلول إبداعية وتقنية في مكان واحد",
@@ -84,6 +85,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <ChatBot />  {/* 👈 أضف هذا السطر */}
         </ThemeProvider>
       </body>
     </html>
