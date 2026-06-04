@@ -49,7 +49,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden">
                 <Image
-                  src="/public/logo.png"
+                  src="/logo.png"
                   alt="صلاح بلس"
                   fill
                   className="object-cover"
