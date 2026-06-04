@@ -52,7 +52,7 @@ export const services: Service[] = [
     title: "التصميم الجرافيكي",
     description: "تصاميم إبداعية احترافية تشمل المنشورات، البروشورات، البنرات، والمواد التسويقية بجودة عالية.",
     icon: FiPenTool,
-    image: "/services/graphic-design.webp",
+    image: "/services/graphic-design.jpg",
     features: ["تصميم منشورات السوشيال ميديا", "تصميم البروشورات والكتيبات", "البانرات الإعلانية", "تغطية الفعاليات"],
   },
   {
@@ -60,7 +60,7 @@ export const services: Service[] = [
     title: "تصميم الكتب التعليمية",
     description: "تصميم كتب ومناهج تعليمية بمعايير احترافية تجمع بين الجاذبية البصرية وسهولة القراءة.",
     icon: FiBook,
-    image: "/services/educational-books.webp",
+    image: "/services/educational-books.jpg",
     features: ["تنسيق المحتوى التعليمي", "تصميم أغلفة الكتب", "الرسوم التوضيحية", "تخطيط الصفحات الداخلية"],
   },
   {
@@ -68,7 +68,7 @@ export const services: Service[] = [
     title: "الهويات البصرية والشعارات",
     description: "بناء هويات بصرية متكاملة تعكس روح علامتك التجارية وتميزها في السوق.",
     icon: FiStar,
-    image: "/services/branding.webp",
+    image: "/services/branding.jpg",
     features: ["تصميم الشعارات", "الألوان المؤسسية", "الخطوط والأنماط", "دليل الهوية البصرية"],
   },
   {
@@ -76,7 +76,7 @@ export const services: Service[] = [
     title: "الخدمات المكتبية",
     description: "حلول مكتبية متكاملة تشمل الطباعة، التغليف، التجهيز، والخدمات اللوجستية المكتبية.",
     icon: FiPrinter,
-    image: "/services/office-services.webp",
+    image: "/services/office-services.jpg",
     features: ["طباعة عالية الجودة", "تغليف احترافي", "تجهيز الملفات", "خدمات النسخ والمسح"],
   },
   {
@@ -84,7 +84,7 @@ export const services: Service[] = [
     title: "العروض التقديمية الاحترافية",
     description: "عروض تقديمية مبهرة بتصاميم عصرية ورسوم بيانية توصل أفكارك بوضوح وإقناع.",
     icon: FiMonitor,
-    image: "/services/presentations.webp",
+    image: "/services/presentations.jpg",
     features: ["عروض بوربوينت احترافية", "رسوم بيانية تفاعلية", "إنفوجرافيك", "عروض الفيديو القصيرة"],
   },
   {
@@ -92,7 +92,7 @@ export const services: Service[] = [
     title: "الصيانة والدعم التقني",
     description: "دعم تقني شامل للأجهزة والأنظمة والشبكات مع حلول سريعة وموثوقة.",
     icon: FiTool,
-    image: "/services/tech-support.webp",
+    image: "/services/tech-support.jpg",
     features: ["صيانة الأجهزة", "إعداد الشبكات", "استكشاف الأخطاء", "دعم فني عن بعد"],
   },
   {
@@ -100,7 +100,7 @@ export const services: Service[] = [
     title: "حلول الذكاء الاصطناعي",
     description: "توظيف أحدث تقنيات الذكاء الاصطناعي لتطوير أعمالك وأتمتة عملياتك بكفاءة.",
     icon: FiCpu,
-    image: "/services/ai-solutions.webp",
+    image: "/services/ai-solutions.jpg",
     features: ["تطبيقات ChatGPT", "أتمتة المهام", "تحليل البيانات", "توليد المحتوى الذكي"],
   },
 ];
@@ -111,7 +111,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: "هوية بصرية لشركة تقنية",
     category: "هوية بصرية",
     description: "تصميم هوية بصرية كاملة لشركة ناشئة في مجال التقنية.",
-    image: "/portfolio/1.webp",
+    image: "/portfolio/1.jpg",
     tags: ["شعار", "هوية", "ألوان مؤسسية"],
   },
   {
@@ -119,7 +119,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: "كتاب تعليمي تفاعلي",
     category: "كتب تعليمية",
     description: "تصميم وتنسيق كتاب تعليمي لمادة العلوم للصف الثامن.",
-    image: "/portfolio/2.webp",
+    image: "/portfolio/2.jpg",
     tags: ["تعليم", "تنسيق", "رسوم توضيحية"],
   },
   {
@@ -127,7 +127,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: "حملة تسويقية متكاملة",
     category: "تصميم جرافيكي",
     description: "تصميم مواد حملة تسويقية لإطلاق منتج جديد.",
-    image: "/portfolio/3.webp",
+    image: "/portfolio/3.jpg",
     tags: ["تسويق", "سوشيال ميديا", "إعلانات"],
   },
   {
@@ -135,7 +135,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: "عرض تقديمي لمؤتمر",
     category: "عروض تقديمية",
     description: "عرض تقديمي احترافي لمؤتمر اقتصادي دولي.",
-    image: "/portfolio/4.webp",
+    image: "/portfolio/4.jpg",
     tags: ["بوربوينت", "مؤتمر", "إنفوجرافيك"],
   },
   {
@@ -143,7 +143,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: "تطبيق ذكاء اصطناعي",
     category: "ذكاء اصطناعي",
     description: "تطوير بوت ذكي لخدمة العملاء باستخدام ChatGPT.",
-    image: "/portfolio/5.webp",
+    image: "/portfolio/5.jpg",
     tags: ["AI", "ChatGPT", "أتمتة"],
   },
   {
@@ -151,7 +151,7 @@ export const portfolioItems: PortfolioItem[] = [
     title: "طباعة وتغليف فاخر",
     category: "خدمات مكتبية",
     description: "مشروع طباعة وتغليف فاخر لمجموعة كتب قانونية.",
-    image: "/portfolio/6.webp",
+    image: "/portfolio/6.jpg",
     tags: ["طباعة", "تغليف", "فاخر"],
   },
 ];
