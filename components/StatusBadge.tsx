@@ -11,9 +11,21 @@ export default function StatusBadge() {
       try {
         const res = await fetch("/api/settings");
         const data = await res.json();
-        setAvailable(data.available);
+        
+        // 👈 تحقق من اليوم
+        const today = new Date().getDay(); // 0=أحد, 5=جمعة, 6=سبت
+        
+        if (today === 5) {
+          // الجمعة - مغلق دائماً
+          setAvailable(false);
+        } else {
+          // باقي الأيام - حسب الإعدادات
+          setAvailable(data.available);
+        }
       } catch (error) {
-        setAvailable(true);
+        // الجمعة مغلق
+        const today = new Date().getDay();
+        setAvailable(today !== 5);
       }
       setLoading(false);
     }
