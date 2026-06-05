@@ -3,13 +3,14 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ChatBot from "@/components/ChatBot";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import Schema from "./schema";
 
 export const metadata: Metadata = {
   title: "صلاح بلس | تصميم جرافيكي وهوية بصرية احترافية في اليمن",
   description:
     "صلاح بلس - خدمات تصميم جرافيكي وهوية بصرية احترافية في اليمن. تصميم شعارات، عروض تقديمية، كتب تعليمية، وحلول ذكاء اصطناعي. اطلب خدمتك الآن",
   keywords: [
-    // كلمات عامة
     "تصميم جرافيكي",
     "هوية بصرية",
     "شعارات",
@@ -18,8 +19,6 @@ export const metadata: Metadata = {
     "ذكاء اصطناعي",
     "خدمات تقنية",
     "تصميم",
-    
-    // كلمات تستهدف اليمن
     "تصميم جرافيكي اليمن",
     "مصمم جرافيك يمني",
     "خدمات تصميم اليمن",
@@ -33,8 +32,6 @@ export const metadata: Metadata = {
     "تصميم هوية بصرية صنعاء",
     "مصمم شعارات عدن",
     "خدمات تصميم تعز",
-    
-    // كلمات تجارية
     "صلاح بلس",
     "وكالة تصميم",
     "حلول إبداعية",
@@ -43,8 +40,6 @@ export const metadata: Metadata = {
     "أتمتة",
     "ChatGPT",
     "Midjourney",
-    
-    // كلمات طويلة
     "افضل مصمم جرافيك في اليمن",
     "تصميم هوية تجارية احترافية",
     "اسعار تصميم الشعارات في اليمن",
@@ -109,14 +104,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="صلاح بلس" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
-        
-        {/* Google Search Console */}
         <meta name="google-site-verification" content="gaD1sbl3GPTI-YUYirBXUwU_78oIV5Xia04wqJTkEIs" />
-        
-        {/* Turnstile */}
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       </head>
       <body>
+        <Schema />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -125,6 +117,7 @@ export default function RootLayout({
         >
           {children}
           <ChatBot />
+          <WhatsAppButton />
         </ThemeProvider>
         <Analytics />
       </body>
