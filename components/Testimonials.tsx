@@ -2,25 +2,29 @@
 
 import { motion } from "framer-motion";
 import { FiStar } from "react-icons/fi";
+import { FaStarHalfAlt } from "react-icons/fa";
 
 const testimonials = [
   {
     name: "أحمد محمد",
     role: "صاحب شركة تقنية",
     text: "صلاح بلس قدم لنا هوية بصرية احترافية فاقت توقعاتنا. العمل سريع والجودة عالية.",
-    stars: 5,
+    stars: 4.5,
+    image: "/clients/client1.jpg",
   },
   {
     name: "نورة علي",
     role: "مديرة تسويق",
     text: "العروض التقديمية اللي سواها لنا كانت مبهرة. أنصح به وبقوة.",
-    stars: 5,
+    stars: 4.5,
+    image: "/clients/client2.jpg",
   },
   {
     name: "خالد العمري",
     role: "رائد أعمال",
     text: "خدمات الذكاء الاصطناعي اللي قدمها ساعدتنا نوفر وقت وجهد كبير. شكراً صلاح بلس.",
-    stars: 5,
+    stars: 4.5,
+    image: "/clients/client3.jpg",
   },
 ];
 
@@ -51,19 +55,41 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
-              className="bg-white dark:bg-navy-lighter p-6 sm:p-8 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-gold/30 transition-all"
+              className="bg-white dark:bg-navy-lighter p-6 sm:p-8 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-gold/30 transition-all flex flex-col"
             >
-              <div className="flex gap-1 mb-4">
-                {Array.from({ length: item.stars }).map((_, i) => (
-                  <FiStar key={i} className="text-gold fill-gold" />
-                ))}
+              {/* النجوم + التقييم */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex gap-0.5">
+                  {Array.from({ length: Math.floor(item.stars) }).map((_, i) => (
+                    <FiStar key={`full-${i}`} className="text-gold fill-gold" />
+                  ))}
+                  {item.stars % 1 !== 0 && (
+                    <FaStarHalfAlt className="text-gold fill-gold" />
+                  )}
+                </div>
+                <span className="text-gold font-bold text-sm">{item.stars}</span>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6">
+
+              {/* نص الرأي - يتمدد ليملأ المساحة */}
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6 flex-grow">
                 "{item.text}"
               </p>
-              <div>
-                <div className="font-bold text-navy dark:text-white">{item.name}</div>
-                <div className="text-xs text-gray-400">{item.role}</div>
+
+              {/* صورة العميل + الاسم - مثبت في الأسفل */}
+              <div className="flex items-center gap-3 mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-gold flex-shrink-0"
+                />
+                <div className="min-w-0">
+                  <div className="font-bold text-navy dark:text-white text-sm truncate">
+                    {item.name}
+                  </div>
+                  <div className="text-xs text-gray-400 truncate">
+                    {item.role}
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}
