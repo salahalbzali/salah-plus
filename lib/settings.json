@@ -6,14 +6,13 @@
     "services": 7
   },
   "workHours": {
-    "start": "09:00",
-    "end": "18:00",
+    "start": "9:00 ص",
+    "end": "9:30 م",
     "days": "السبت - الخميس",
     "fridayClosed": true
   },
   "scrollToTop": {
     "showAfter": 400,
     "bottom": 80
+  }
 }
-}
-    
