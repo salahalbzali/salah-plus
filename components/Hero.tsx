@@ -54,7 +54,7 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight mb-4 sm:mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-4 sm:mb-6">
               <span className="text-navy dark:text-white">نحول أفكارك إلى </span>
               <span className="gradient-text">تصاميم احترافية</span>
             </h1>
@@ -82,6 +82,17 @@ export default function Hero() {
                 <FiEye />
                 معرض الأعمال
               </motion.a>
+            </div>
+
+            {/* سنوات الخبرة + العملاء */}
+            <div className="flex items-center gap-4 justify-center lg:justify-start mt-6 text-sm text-gray-500 dark:text-gray-400">
+              <span className="flex items-center gap-1">
+                <span className="text-gold font-bold text-lg">+5</span> سنوات خبرة
+              </span>
+              <span className="w-1 h-1 bg-gold rounded-full" />
+              <span className="flex items-center gap-1">
+                <span className="text-gold font-bold text-lg">+50</span> عميل سعيد
+              </span>
             </div>
 
             <div className="flex flex-wrap gap-4 sm:gap-6 mt-8 sm:mt-10 justify-center lg:justify-start">
@@ -148,8 +159,6 @@ export default function Hero() {
           </motion.div>
         </div>
       </div>
-
-      
     </section>
   );
 }
