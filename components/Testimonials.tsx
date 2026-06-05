@@ -57,25 +57,24 @@ export default function Testimonials() {
               transition={{ delay: index * 0.2 }}
               className="bg-white dark:bg-navy-lighter p-6 sm:p-8 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-gold/30 transition-all flex flex-col"
             >
-              {/* النجوم + التقييم */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex gap-0.5">
                   {Array.from({ length: Math.floor(item.stars) }).map((_, i) => (
-                    <FiStar key={`full-${i}`} className="text-gold fill-gold" />
+                    <FiStar key={`full-${i}`} className="text-gold fill-gold text-2xl" />
                   ))}
                   {item.stars % 1 !== 0 && (
-                    <FaStarHalfAlt className="text-gold fill-gold" />
+                    <FaStarHalfAlt className="text-gold fill-gold text-2xl" />
                   )}
                 </div>
-                <span className="text-gold font-bold text-sm">{item.stars}</span>
+                <span className="text-gold font-bold text-lg">{item.stars}</span>
               </div>
 
-              {/* نص الرأي - يتمدد ليملأ المساحة */}
               <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6 flex-grow">
-                "{item.text}"
+                <span className="text-gold text-3xl font-bold leading-none align-middle">"</span>
+                {item.text}
+                <span className="text-gold text-3xl font-bold leading-none align-middle">"</span>
               </p>
 
-              {/* صورة العميل + الاسم - مثبت في الأسفل */}
               <div className="flex items-center gap-3 mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
                 <img
                   src={item.image}
