@@ -32,9 +32,8 @@ export default function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isMobile, setIsMobile] = useState(false);
-  const [turnstileReady, setTurnstileReady] = useState(false);
+  const [turnstileShown, setTurnstileShown] = useState(false);
 
-  // 1. كشف الأجهزة المحمولة
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -42,23 +41,8 @@ export default function Contact() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // 2. تحميل Turnstile
-  useEffect(() => {
-    const checkTurnstile = setInterval(() => {
-      const widget = document.querySelector('.cf-turnstile');
-      if (widget) {
-        setTurnstileReady(true);
-        clearInterval(checkTurnstile);
-      }
-    }, 500);
-    
-    return () => clearInterval(checkTurnstile);
-  }, []);
-
-  // 3. إخفاء شريط التنقل السفلي عند فتح لوحة المفاتيح (للموبايل)
   useEffect(() => {
     if (!isMobile) return;
-    
     const inputs = document.querySelectorAll("input, textarea");
     const handleFocus = () => {
       const bottomBar = document.querySelector(".mobile-bottom-nav") as HTMLElement;
@@ -68,12 +52,10 @@ export default function Contact() {
       const bottomBar = document.querySelector(".mobile-bottom-nav") as HTMLElement;
       if (bottomBar) bottomBar.style.display = "flex";
     };
-    
     inputs.forEach((input) => {
       input.addEventListener("focus", handleFocus);
       input.addEventListener("blur", handleBlur);
     });
-    
     return () => {
       inputs.forEach((input) => {
         input.removeEventListener("focus", handleFocus);
@@ -82,7 +64,6 @@ export default function Contact() {
     };
   }, [isMobile]);
 
-  // تأثيرات التمرير
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -95,26 +76,46 @@ export default function Contact() {
     if (errorMessage) setErrorMessage("");
   };
 
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY || "0x4AAAAAADetE7Omp726aW1x";
+
+  const showTurnstile = () => {
+    setTurnstileShown(true);
+    setErrorMessage("الرجاء إكمال التحقق الأمني أدناه");
+    
+    setTimeout(() => {
+      if (!document.querySelector('script[src*="turnstile"]')) {
+        const script = document.createElement("script");
+        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+        script.onload = () => {
+          if ((window as any).turnstile) {
+            (window as any).turnstile.render("#turnstile-widget");
+          }
+        };
+        document.head.appendChild(script);
+      } else {
+        if ((window as any).turnstile) {
+          (window as any).turnstile.render("#turnstile-widget");
+        }
+      }
+    }, 300);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
 
-    if (!turnstileReady) {
-      setErrorMessage("جاري تحميل التحقق الأمني، انتظر قليلاً");
+    // إذا لم يظهر Turnstile بعد، أظهره
+    if (!turnstileShown) {
+      showTurnstile();
       return;
     }
 
-    if (typeof window !== "undefined" && (window as any).turnstile) {
-      (window as any).turnstile.reset();
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 500));
-
+    // تحقق من Token
     const turnstileInput = document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
     const turnstileToken = turnstileInput?.value;
     
     if (!turnstileToken) {
-      setErrorMessage("الرجاء الانتظار حتى يكتمل التحقق الأمني");
+      setErrorMessage("الرجاء إكمال التحقق الأمني");
       return;
     }
 
@@ -137,6 +138,7 @@ export default function Contact() {
 
       setStatus("success");
       setFormState({ name: "", email: "", subject: "", message: "" });
+      setTurnstileShown(false);
       setTimeout(() => setStatus("idle"), 5000);
     } catch (error: any) {
       setStatus("error");
@@ -147,8 +149,6 @@ export default function Contact() {
       }, 5000);
     }
   };
-
-  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY || "0x4AAAAAADetE7Omp726aW1x";
 
   return (
     <section
@@ -249,16 +249,8 @@ export default function Contact() {
               />
             </div>
 
-            <div
-              className="cf-turnstile"
-              data-sitekey={siteKey}
-              data-action="contact"
-              data-theme={
-                typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-                  ? "dark"
-                  : "light"
-              }
-            />
+            {/* حاوية Turnstile - تظهر فقط بعد الضغط على إرسال */}
+            <div id="turnstile-widget" className="flex justify-center"></div>
 
             {errorMessage && (
               <div className="text-red-500 text-sm flex items-center gap-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-xl">
