@@ -75,10 +75,16 @@ export default function Contact() {
     <section ref={sectionRef} id="contact" className="py-12 sm:py-16 md:py-20 lg:py-28 bg-white dark:bg-navy-lighter relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div style={{ opacity, y }} className="text-center mb-12 sm:mb-16">
-          <span className="text-gold text-sm font-bold uppercase mb-4 block">تواصل معنا</span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-navy dark:text-white mb-4">لنبدأ <span className="gradient-text">العمل معاً</span></h2>
+          <span className="text-gold text-sm font-bold tracking-widest uppercase mb-4 block">
+            تواصل معنا
+          </span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-navy dark:text-white mb-4">
+            لنبدأ <span className="gradient-text">العمل معاً</span>
+          </h2>
           <div className="w-20 h-0.5 bg-gold mx-auto mb-6 rounded-full" />
-          <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 max-w-2xl mx-auto font-medium">هل لديك مشروع في ذهنك؟ دعنا نساعدك في تحويله إلى واقع.</p>
+          <p className="text-sm sm:text-base text-gray-900 dark:text-white max-w-2xl mx-auto font-medium">
+            هل لديك مشروع في ذهنك؟ دعنا نساعدك في تحويله إلى واقع.
+          </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-5 gap-10">
@@ -164,18 +170,11 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* 👈 شريط التنقل السفلي للجوال */}
         <div className="lg:hidden fixed bottom-4 left-4 right-4 bg-white dark:bg-navy rounded-full shadow-lg p-2 z-50 mobile-bottom-nav">
           <div className="flex justify-around items-center">
-            <a href="#home" className="flex flex-col items-center p-2 text-gray-500 dark:text-gray-400">
-              <span className="text-xs">الرئيسية</span>
-            </a>
-            <a href="#services" className="flex flex-col items-center p-2 text-gray-500 dark:text-gray-400">
-              <span className="text-xs">الخدمات</span>
-            </a>
-            <a href="#contact" className="flex flex-col items-center p-2 bg-gold rounded-full px-4 text-navy">
-              <span className="text-xs font-bold">اتصل بنا</span>
-            </a>
+            <a href="#home" className="flex flex-col items-center p-2 text-gray-500 dark:text-gray-400"><span className="text-xs">الرئيسية</span></a>
+            <a href="#services" className="flex flex-col items-center p-2 text-gray-500 dark:text-gray-400"><span className="text-xs">الخدمات</span></a>
+            <a href="#contact" className="flex flex-col items-center p-2 bg-gold rounded-full px-4 text-navy"><span className="text-xs font-bold">اتصل بنا</span></a>
           </div>
         </div>
       </div>
