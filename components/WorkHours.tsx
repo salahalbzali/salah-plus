@@ -5,8 +5,8 @@ import { FiClock } from "react-icons/fi";
 
 export default function WorkHours() {
   const [workHours, setWorkHours] = useState({
-    start: "09:00",
-    end: "18:00",
+    start: "9:00 ص",
+    end: "9:30 م",
     days: "السبت - الخميس",
     fridayClosed: true,
   });
@@ -18,15 +18,33 @@ export default function WorkHours() {
       try {
         const res = await fetch("/api/settings");
         const data = await res.json();
-        setAvailable(data.available);
+        
+        // تحقق من اليوم والوقت بتوقيت اليمن
+        const now = new Date();
+        const yemenTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Aden" }));
+        const day = yemenTime.getDay();
+        const hours = yemenTime.getHours();
+        
+        if (day === 5) {
+          setAvailable(false);
+        } else if (hours < 9 || hours >= 21) {
+          setAvailable(false);
+        } else {
+          setAvailable(data.available);
+        }
+        
         setWorkHours({
-          start: data.workHours?.start || "09:00",
-          end: data.workHours?.end || "18:00",
+          start: data.workHours?.start || "9:00 ص",
+          end: data.workHours?.end || "9:30 م",
           days: data.workHours?.days || "السبت - الخميس",
           fridayClosed: data.workHours?.fridayClosed ?? true,
         });
       } catch (error) {
-        // استخدام القيم الافتراضية
+        const now = new Date();
+        const yemenTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Aden" }));
+        const day = yemenTime.getDay();
+        const hours = yemenTime.getHours();
+        setAvailable(day !== 5 && hours >= 9 && hours < 21);
       }
       setLoading(false);
     }
@@ -57,7 +75,7 @@ export default function WorkHours() {
         <span className={`text-sm font-bold ${
           available ? "text-green-500" : "text-red-500"
         }`}>
-          {available ? "متاح للعمل حالياً" : "مشغول حالياً"}
+          {available ? "🟢 متاح للعمل حالياً" : "🔴 مغلق حالياً"}
         </span>
       </div>
 
