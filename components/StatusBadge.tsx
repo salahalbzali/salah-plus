@@ -25,8 +25,8 @@ export default function StatusBadge() {
         else if (hours < 9) {
           setAvailable(false);
         }
-        // بعد 6 مساءً
-        else if (hours >= 18) {
+        // بعد 9:30 مساءً
+        else if (hours >= 21) {
           setAvailable(false);
         }
         // داخل الدوام
@@ -39,7 +39,7 @@ export default function StatusBadge() {
         const day = yemenTime.getDay();
         const hours = yemenTime.getHours();
         
-        setAvailable(day !== 5 && hours >= 9 && hours < 18);
+        setAvailable(day !== 5 && hours >= 9 && hours < 21);
       }
       setLoading(false);
     }
