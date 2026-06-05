@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ChatBot from "@/components/ChatBot";
 
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     "ChatGPT",
     "Midjourney",
     
-    // كلمات طويلة (يستخدمها الناس في البحث)
+    // كلمات طويلة
     "افضل مصمم جرافيك في اليمن",
     "تصميم هوية تجارية احترافية",
     "اسعار تصميم الشعارات في اليمن",
@@ -125,6 +126,7 @@ export default function RootLayout({
           {children}
           <ChatBot />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
