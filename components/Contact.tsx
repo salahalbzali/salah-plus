@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   FiMail, FiPhone, FiMapPin, FiSend, FiFacebook, FiInstagram,
   FiCheckCircle, FiAlertCircle, FiLoader,
@@ -27,10 +27,6 @@ export default function Contact() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.5, 1], [50, 0, -50]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
     if (errorMessage) setErrorMessage("");
@@ -41,6 +37,26 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
+
+    // إعادة تحميل Turnstile إذا اختفى
+    const existingWidget = document.querySelector('.cf-turnstile');
+    if (!existingWidget) {
+      const form = formRef.current;
+      if (form) {
+        const div = document.createElement("div");
+        div.className = "cf-turnstile";
+        div.setAttribute("data-sitekey", siteKey);
+        const btn = form.querySelector("button[type='submit']");
+        if (btn) {
+          btn.parentNode?.insertBefore(div, btn);
+        }
+        if ((window as any).turnstile) {
+          (window as any).turnstile.render(div);
+        }
+      }
+      setErrorMessage("جاري تحميل التحقق... انتظر ثانية");
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    }
 
     const turnstileInput = document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement;
     const turnstileToken = turnstileInput?.value;
@@ -74,17 +90,48 @@ export default function Contact() {
   return (
     <section ref={sectionRef} id="contact" className="py-12 sm:py-16 md:py-20 lg:py-28 bg-white dark:bg-navy-lighter relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div style={{ opacity, y }} className="text-center mb-12 sm:mb-16">
-          <span className="text-gold text-sm font-bold tracking-widest uppercase mb-4 block">
+        {/* عنوان القسم - مثل Testimonials */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <motion.span 
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-gold text-sm font-bold tracking-widest uppercase mb-4 block"
+          >
             تواصل معنا
-          </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-navy dark:text-white mb-4">
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-navy dark:text-white mb-4"
+          >
             لنبدأ <span className="gradient-text">العمل معاً</span>
-          </h2>
-          <div className="w-20 h-0.5 bg-gold mx-auto mb-6 rounded-full" />
-          <p className="text-sm sm:text-base text-gray-900 dark:text-white max-w-2xl mx-auto font-medium">
+          </motion.h2>
+          <motion.div 
+            initial={{ width: 0 }}
+            whileInView={{ width: "5rem" }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="h-0.5 bg-gold mx-auto rounded-full mb-6" 
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="text-sm sm:text-base text-gray-900 dark:text-white max-w-2xl mx-auto font-medium"
+          >
             هل لديك مشروع في ذهنك؟ دعنا نساعدك في تحويله إلى واقع.
-          </p>
+          </motion.p>
         </motion.div>
 
         <div className="grid lg:grid-cols-5 gap-10">
@@ -108,6 +155,7 @@ export default function Contact() {
               <textarea name="message" required rows={5} value={formState.message} onChange={handleChange} className="w-full px-5 py-3.5 rounded-xl bg-cream dark:bg-navy border border-gray-200 dark:border-gray-700 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none resize-none text-navy dark:text-white" placeholder="اكتب رسالتك هنا..." />
             </div>
 
+            {/* Turnstile */}
             <div className="cf-turnstile" data-sitekey={siteKey} />
 
             {errorMessage && (
