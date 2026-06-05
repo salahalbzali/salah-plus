@@ -5,13 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { FiMenu, FiX } from "react-icons/fi";
 import ThemeToggle from "./ThemeToggle";
+import SearchModal from "./SearchModal";
 
 const navLinks = [
-  { href: "/#home", label: "الرئيسية" },
-  { href: "/#services", label: "الخدمات" },
-  { href: "/#portfolio", label: "أعمالنا" },
-  { href: "/#blog", label: "المدونة" },
-  { href: "/#contact", label: "تواصل معنا" },
+  { href: "#home", label: "الرئيسية" },
+  { href: "#services", label: "الخدمات" },
+  { href: "#portfolio", label: "أعمالنا" },
+  { href: "#blog", label: "المدونة" },
+  { href: "#contact", label: "تواصل معنا" },
 ];
 
 export default function Navbar() {
@@ -52,7 +53,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
-            {/* Logo مع شعارين */}
+            {/* Logo */}
             <Link href="#home" className="flex items-center gap-2 sm:gap-3 group">
               <motion.div
                 whileHover={{ rotate: -10, scale: 1.1 }}
@@ -98,6 +99,10 @@ export default function Navbar() {
                   />
                 </Link>
               ))}
+              
+              {/* أيقونة البحث - سطح المكتب */}
+              <SearchModal />
+              
               <div className="mr-2 xl:mr-4">
                 <ThemeToggle />
               </div>
@@ -105,6 +110,8 @@ export default function Navbar() {
 
             {/* Mobile Menu Button */}
             <div className="flex items-center gap-2 lg:hidden">
+              {/* أيقونة البحث - الجوال */}
+              <SearchModal />
               <ThemeToggle />
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -144,13 +151,11 @@ export default function Navbar() {
                 {/* شعار القائمة الجوال */}
                 <div className="flex items-center gap-3 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="relative w-10 h-10 rounded-xl overflow-hidden">
-                    {/* شعار الوضع النهاري للجوال */}
                     <img
                       src="/logo-light.png"
                       alt="صلاح بلس"
                       className="w-full h-full object-cover dark:hidden"
                     />
-                    {/* شعار الوضع الليلي للجوال */}
                     <img
                       src="/logo-dark.png"
                       alt="صلاح بلس"
