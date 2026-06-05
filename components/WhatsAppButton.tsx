@@ -8,7 +8,7 @@ export default function WhatsAppButton() {
       href="https://wa.me/967775307315"
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-36 right-5 z-50 bg-green-500 text-white p-4 rounded-full shadow-xl hover:bg-green-600 transition-all hover:scale-110"
+      className="fixed bottom-40 right-5 z-50 bg-green-500 text-white p-4 rounded-full shadow-xl hover:bg-green-600 transition-all hover:scale-110"
       aria-label="تواصل واتساب"
     >
       <FaWhatsapp size={24} />
