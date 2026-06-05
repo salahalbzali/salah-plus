@@ -12,13 +12,12 @@ export default function StatusBadge() {
         const res = await fetch("/api/settings");
         const data = await res.json();
         
-        // 👈 الوقت حسب توقيت اليمن
         const now = new Date();
         const yemenTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Aden" }));
-        const day = yemenTime.getDay(); // 0=أحد, 5=جمعة
+        const day = yemenTime.getDay();
         const hours = yemenTime.getHours();
         
-        // الجمعة - مغلق دائماً
+        // الجمعة - مغلق
         if (day === 5) {
           setAvailable(false);
         }
@@ -64,7 +63,7 @@ export default function StatusBadge() {
         available ? "bg-green-500" : "bg-red-500"
       }`} />
       <span className="text-xs sm:text-sm font-bold text-navy dark:text-white whitespace-nowrap">
-        {available ? "متاح للعمل الحر" : "مشغول حالياً"}
+        {available ? "🟢 متاح للعمل" : "🔴 مغلق حالياً"}
       </span>
     </>
   );
