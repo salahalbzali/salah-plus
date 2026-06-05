@@ -12,20 +12,35 @@ export default function StatusBadge() {
         const res = await fetch("/api/settings");
         const data = await res.json();
         
-        // 👈 تحقق من اليوم
-        const today = new Date().getDay(); // 0=أحد, 5=جمعة, 6=سبت
+        // 👈 الوقت حسب توقيت اليمن
+        const now = new Date();
+        const yemenTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Aden" }));
+        const day = yemenTime.getDay(); // 0=أحد, 5=جمعة
+        const hours = yemenTime.getHours();
         
-        if (today === 5) {
-          // الجمعة - مغلق دائماً
+        // الجمعة - مغلق دائماً
+        if (day === 5) {
           setAvailable(false);
-        } else {
-          // باقي الأيام - حسب الإعدادات
+        }
+        // قبل 9 صباحاً
+        else if (hours < 9) {
+          setAvailable(false);
+        }
+        // بعد 6 مساءً
+        else if (hours >= 18) {
+          setAvailable(false);
+        }
+        // داخل الدوام
+        else {
           setAvailable(data.available);
         }
       } catch (error) {
-        // الجمعة مغلق
-        const today = new Date().getDay();
-        setAvailable(today !== 5);
+        const now = new Date();
+        const yemenTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Aden" }));
+        const day = yemenTime.getDay();
+        const hours = yemenTime.getHours();
+        
+        setAvailable(day !== 5 && hours >= 9 && hours < 18);
       }
       setLoading(false);
     }
