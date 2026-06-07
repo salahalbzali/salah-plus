@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ChatBot from "@/components/ChatBot";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import ScrollToTop from "@/components/ScrollToTop";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import Schema from "./schema";
 
 export const metadata: Metadata = {
@@ -105,6 +107,9 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="google-site-verification" content="gaD1sbl3GPTI-YUYirBXUwU_78oIV5Xia04wqJTkEIs" />
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       </head>
       <body>
@@ -118,6 +123,8 @@ export default function RootLayout({
           {children}
           <ChatBot />
           <WhatsAppButton />
+          <ScrollToTop />
+          <MobileBottomNav />
         </ThemeProvider>
         <Analytics />
       </body>
