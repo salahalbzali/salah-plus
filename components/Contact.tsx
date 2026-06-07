@@ -73,6 +73,7 @@ export default function Contact() {
       await emailjs.send("service_yygh4dj", "template_0n382af", {
         from_name: formState.name,
         from_email: formState.email,
+        reply_to: formState.email,
         title: formState.subject,
         message: formState.message,
       }, "j766og8IrXhks3sKC");
