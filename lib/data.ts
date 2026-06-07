@@ -196,9 +196,9 @@ export const stats: Stat[] = [
 ];
 
 export const socialLinks = {
-  facebook: "https://facebook.com/salahplus",
-  x: "https://x.com/salahplus",
-  instagram: "https://instagram.com/salahplus",
+  facebook: "https://www.facebook.com/share/1b3hZEpeW5/",
+  x: "https://x.com/SALA1PLUS",
+  instagram: "https://www.instagram.com/salahh.plus?igsh=MXM0emtmaWFvOGVuZA==",
   whatsapp: "https://wa.me/967775307315",
-  email: "salah201617@gmail.com",
+  email: "salahplus2026@gmail.com",
 };
