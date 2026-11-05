@@ -9,27 +9,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const paymentMethods = [
-  {
-    id: "jawali",
-    name: "محفظة جوالي (Jawali)",
-    number: "775307315", // 👈 ضع رقم محفظتك هنا
-    desc: "تحويل فوري عبر تطبيق جوالي",
-    image: "/payments/jawali.png",
-  },
-  {
-    id: "jaib",
-    name: "محفظة جيب (Jaib)",
-    number: "775307315", // 👈 ضع رقم محفظتك هنا
-    desc: "تحويل فوري عبر تطبيق جيب",
-    image: "/payments/jaib.png",
-  },
-  {
-    id: "kuraimi",
-    name: "محفظة حاسب كريمي (Kuraimi)",
-    number: "2030941", // 👈 ضع رقم محفظتك هنا
-    desc: "تحويل فوري عبر محفظة بنك الكريمي",
-    image: "/payments/kuraimi.png",
-  },
+  { id: "jawali", name: "محفظة جوالي (Jawali)", number: "775307315", desc: "تحويل فوري عبر تطبيق جوالي", image: "/payments/jawali.png" },
+  { id: "jaib", name: "محفظة جيب (Jaib)", number: "775307315", desc: "تحويل فوري عبر تطبيق جيب", image: "/payments/jaib.png" },
+  { id: "kuraimi", name: "محفظة حاسب كريمي (Kuraimi)", number: "2030941", desc: "تحويل فوري عبر محفظة بنك الكريمي", image: "/payments/kuraimi.png" },
 ];
 
 export default function CartPage() {
@@ -48,25 +30,13 @@ export default function CartPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleCheckout = async (e: React.FormEvent) => {
+  const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName || !customerPhone) return alert("الرجاء إدخال الاسم ورقم الهاتف");
     setIsSubmitting(true);
     
     const payment = paymentMethods.find((p) => p.id === selectedPayment);
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-    // حفظ الطلب في قاعدة البيانات
-    try {
-      await fetch(`${supabaseUrl}/rest/v1/orders`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "apikey": supabaseKey, "Authorization": `Bearer ${supabaseKey}`, "Prefer": "return=minimal" },
-        body: JSON.stringify({ customer_name: customerName, customer_phone: customerPhone, total_price: cartTotal, items: cart, payment_method: payment?.name, status: "جديد" }),
-      });
-    } catch (error) { console.error(error); }
-
-    // فتح واتساب
     let message = `مرحباً صلاح بلس، طلب جديد:\n\n👤 الاسم: ${customerName}\n📱 الهاتف: ${customerPhone}\n\n`;
     cart.forEach((item) => { message += `📚 ${item.title} - الكمية: ${item.quantity} - السعر: ${item.price * item.quantity} جنيهاً\n`; });
     message += `\n💰 الإجمالي: ${cartTotal} جنيهاً\n💳 طريقة الدفع: ${payment?.name}\n📤 يرجى إرسال صورة الإيصال.`;
