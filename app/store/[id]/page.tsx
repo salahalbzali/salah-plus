@@ -25,26 +25,77 @@ export default function BookDetailsPage() {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  if (!book) return <div className="min-h-screen flex flex-col items-center justify-center bg-cream dark:bg-navy"><h1 className="text-2xl font-bold mb-4">الكتاب غير موجود</h1><Link href="/store" className="text-gold hover:underline">العودة للمتجر</Link></div>;
+  if (!book) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-cream dark:bg-navy">
+        <h1 className="text-2xl font-bold mb-4">الكتاب غير موجود</h1>
+        <Link href="/store" className="text-gold hover:underline">العودة للمتجر</Link>
+      </div>
+    );
+  }
+
+  // دالة لتنسيق الوصف وتلوين العناوين
+  const renderDescription = (text: string) => {
+    return text.split('\n').map((line, index) => {
+      const trimmedLine = line.trim();
+      
+      // إذا كان السطر فارغاً، نضع مسافة بسيطة
+      if (!trimmedLine) return <div key={index} className="h-2"></div>;
+
+      // اكتشاف العناوين: إذا كان السطر يبدأ بإيموجي أو ينتهي بعلامة استفهام
+      // eslint-disable-next-line no-misleading-character-class
+      const isHeading = /^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(trimmedLine) || trimmedLine.endsWith('؟');
+
+      if (isHeading) {
+        return (
+          <h3 key={index} className="text-gold text-xl font-bold mt-6 mb-3 flex items-center gap-2">
+            {trimmedLine}
+          </h3>
+        );
+      }
+
+      // النصوص العادية
+      return (
+        <p key={index} className="text-gray-700 dark:text-gray-300 mb-2 leading-relaxed text-lg">
+          {trimmedLine}
+        </p>
+      );
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-cream dark:bg-navy pt-24 pb-16" dir="rtl">
+    // 👈 أضفنا pb-32 هنا لكي لا تغطي الأزرار العائمة (الواتساب والشات بوت) زر الإضافة للسلة
+    <div className="min-h-screen bg-cream dark:bg-navy pt-24 pb-32" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-500 hover:text-gold mb-8 transition-colors"><FiArrowRight /> العودة للمتجر</button>
+        
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-gray-500 hover:text-gold mb-8 transition-colors">
+          <FiArrowRight /> العودة للمتجر
+        </button>
+
         <div className="grid md:grid-cols-2 gap-10">
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white dark:bg-navy-lighter rounded-2xl p-4 border border-gray-100 dark:border-gray-800 shadow-sm flex items-center justify-center">
+          {/* صورة الكتاب */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white dark:bg-navy-lighter rounded-2xl p-4 border border-gray-100 dark:border-gray-800 shadow-sm flex items-start justify-center h-fit">
             <div className="relative aspect-square w-full">
               <img src={book.image_url} alt={book.title} className="absolute inset-0 w-full h-full object-cover rounded-xl" />
             </div>
           </motion.div>
           
+          {/* تفاصيل الكتاب */}
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex flex-col">
-            <h1 className="text-3xl sm:text-4xl font-bold text-navy dark:text-white mb-3">{book.title}</h1>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">{book.author}</p>
-            <div className="text-3xl font-black text-gold mb-6">{book.price} <span className="text-lg">جنيهاً</span></div>
-            <div className="text-gray-700 dark:text-gray-300 leading-loose mb-8 flex-grow whitespace-pre-line text-lg">{book.description}</div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-navy dark:text-white mb-3 leading-snug">{book.title}</h1>
+            <p className="text-gray-500 dark:text-gray-400 mb-4 text-lg">{book.author}</p>
             
-            <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl border border-gray-100 dark:border-gray-800">
+            <div className="text-3xl font-black text-gold mb-8 pb-6 border-b border-gray-200 dark:border-gray-800">
+              {book.price} <span className="text-lg">جنيهاً</span>
+            </div>
+
+            {/* هنا يتم استدعاء دالة تنسيق الوصف */}
+            <div className="flex-grow mb-8">
+              {renderDescription(book.description)}
+            </div>
+            
+            {/* صندوق الإضافة للسلة */}
+            <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <span className="text-gray-600 dark:text-gray-400 font-medium">الكمية</span>
                 <div className="flex items-center gap-4 bg-cream dark:bg-navy px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -53,7 +104,7 @@ export default function BookDetailsPage() {
                   <button onClick={() => setQuantity(quantity + 1)} className="text-gray-500 hover:text-gold"><FiPlus /></button>
                 </div>
               </div>
-              <button onClick={handleAddToCart} className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${added ? "bg-green-500 text-white" : "bg-gold text-navy hover:bg-gold-dark"}`}>
+              <button onClick={handleAddToCart} className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-lg ${added ? "bg-green-500 text-white shadow-green-500/20" : "bg-gold text-navy hover:bg-gold-dark shadow-gold/20"}`}>
                 {added ? <><FiCheck /> تمت الإضافة</> : <><FiShoppingCart /> أضف للسلة</>}
               </button>
             </div>
