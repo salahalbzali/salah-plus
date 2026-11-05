@@ -3,21 +3,24 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiMenu, FiX, FiShoppingCart } from "react-icons/fi";
 import ThemeToggle from "./ThemeToggle";
 import SearchModal from "./SearchModal";
+import { useCart } from "@/lib/CartContext";
 
 const navLinks = [
-  { href: "#home", label: "الرئيسية" },
-  { href: "#services", label: "الخدمات" },
-  { href: "#portfolio", label: "أعمالنا" },
-  { href: "#blog", label: "المدونة" },
-  { href: "#contact", label: "تواصل معنا" },
+  { href: "/#home", label: "الرئيسية" },
+  { href: "/store", label: "المتجر" },
+  { href: "/#services", label: "الخدمات" },
+  { href: "/#portfolio", label: "أعمالنا" },
+  { href: "/#blog", label: "المدونة" },
+  { href: "/#contact", label: "تواصل معنا" },
 ];
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,18 +57,16 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
             {/* Logo */}
-            <Link href="#home" className="flex items-center gap-2 sm:gap-3 group">
+            <Link href="/#home" className="flex items-center gap-2 sm:gap-3 group">
               <motion.div
                 whileHover={{ rotate: -10, scale: 1.1 }}
                 className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden shadow-lg shadow-gold/30"
               >
-                {/* شعار الوضع النهاري */}
                 <img
                   src="/logo-light.png"
                   alt="صلاح بلس"
                   className="w-full h-full object-cover dark:hidden"
                 />
-                {/* شعار الوضع الليلي */}
                 <img
                   src="/logo-dark.png"
                   alt="صلاح بلس"
@@ -92,26 +93,41 @@ export default function Navbar() {
                              hover:text-gold dark:hover:text-gold transition-colors duration-300 group"
                 >
                   {link.label}
-                  <span
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5
-                                 bg-gold-gradient rounded-full transition-all duration-300
-                                 group-hover:w-3/4"
-                  />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gold-gradient rounded-full transition-all duration-300 group-hover:w-3/4" />
                 </Link>
               ))}
               
-              {/* أيقونة البحث - سطح المكتب */}
               <SearchModal />
               
+              {/* 🛒 أيقونة السلة - سطح المكتب */}
+              <Link href="/cart" className="relative p-2 rounded-xl hover:bg-gold/10 transition-colors ml-2">
+                <FiShoppingCart className="text-gray-700 dark:text-gray-300 text-lg" />
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+
               <div className="mr-2 xl:mr-4">
                 <ThemeToggle />
               </div>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button & Icons */}
             <div className="flex items-center gap-2 lg:hidden">
-              {/* أيقونة البحث - الجوال */}
               <SearchModal />
+              
+              {/* 🛒 أيقونة السلة - الجوال */}
+              <Link href="/cart" className="relative p-2 rounded-xl hover:bg-gold/10 transition-colors">
+                <FiShoppingCart className="text-gray-700 dark:text-gray-300 text-lg" />
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+
               <ThemeToggle />
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -143,24 +159,14 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[280px] sm:w-80 bg-white dark:bg-navy
-                         shadow-2xl z-50 lg:hidden overflow-y-auto safe-bottom"
+              className="fixed top-0 right-0 bottom-0 w-[280px] sm:w-80 bg-white dark:bg-navy shadow-2xl z-50 lg:hidden overflow-y-auto safe-bottom"
               dir="rtl"
             >
               <div className="p-5 sm:p-6 pt-16 sm:pt-20">
-                {/* شعار القائمة الجوال */}
                 <div className="flex items-center gap-3 mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="relative w-10 h-10 rounded-xl overflow-hidden">
-                    <img
-                      src="/logo-light.png"
-                      alt="صلاح بلس"
-                      className="w-full h-full object-cover dark:hidden"
-                    />
-                    <img
-                      src="/logo-dark.png"
-                      alt="صلاح بلس"
-                      className="w-full h-full object-cover hidden dark:block"
-                    />
+                    <img src="/logo-light.png" alt="صلاح بلس" className="w-full h-full object-cover dark:hidden" />
+                    <img src="/logo-dark.png" alt="صلاح بلس" className="w-full h-full object-cover hidden dark:block" />
                   </div>
                   <div>
                     <span className="font-bold text-lg text-navy dark:text-white">صلاح</span>
@@ -180,9 +186,8 @@ export default function Navbar() {
                         href={link.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="block py-3 sm:py-4 px-4 sm:px-6 text-base sm:text-lg font-medium
-                                   text-gray-700 dark:text-gray-300
-                                   hover:text-gold dark:hover:text-gold rounded-xl
-                                   hover:bg-gold/5 transition-all duration-300"
+                                   text-gray-700 dark:text-gray-300 hover:text-gold dark:hover:text-gold 
+                                   rounded-xl hover:bg-gold/5 transition-all duration-300"
                       >
                         {link.label}
                       </Link>
