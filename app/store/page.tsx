@@ -6,6 +6,7 @@ import { FiInfo, FiSearch } from "react-icons/fi";
 import Link from "next/link";
 import { booksData } from "@/lib/books";
 import { useCurrency } from "@/lib/CurrencyContext";
+import CurrencySwitcher from "@/components/CurrencySwitcher"; // 👈 استيراد الأزرار
 
 export default function StorePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,9 +26,13 @@ export default function StorePage() {
           <div className="w-20 h-0.5 bg-gold mx-auto rounded-full" />
         </div>
 
-        <div className="max-w-xl mx-auto mb-12 relative">
-          <FiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="ابحث عن كتاب أو مؤلف..." className="w-full pl-4 pr-12 py-4 rounded-2xl bg-white dark:bg-navy-lighter border border-gray-200 dark:border-gray-800 focus:border-gold outline-none text-navy dark:text-white shadow-sm transition-colors" />
+        {/* 👈 شريط البحث وأزرار العملة */}
+        <div className="flex flex-col items-center justify-center gap-4 mb-12">
+          <div className="w-full max-w-xl relative">
+            <FiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="ابحث عن كتاب أو مؤلف..." className="w-full pl-4 pr-12 py-4 rounded-2xl bg-white dark:bg-navy-lighter border border-gray-200 dark:border-gray-800 focus:border-gold outline-none text-navy dark:text-white shadow-sm transition-colors" />
+          </div>
+          <CurrencySwitcher />
         </div>
 
         {filteredBooks.length > 0 ? (
