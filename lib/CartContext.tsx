@@ -9,7 +9,6 @@ export interface Book {
   price: number;
   image_url: string;
   description: string;
-  stock_status: string;
 }
 
 export interface CartItem extends Book {
