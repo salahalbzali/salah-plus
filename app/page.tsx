@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
 import Services from "@/components/Services";
 import Portfolio from "@/components/Portfolio";
+import FeaturedBooks from "@/components/FeaturedBooks"; // 👈 استيراد قسم الكتب
 import Testimonials from "@/components/Testimonials";
 import Blog from "@/components/Blog";
 import Contact from "@/components/Contact";
@@ -18,6 +19,10 @@ export default function HomePage() {
         <Stats />
         <Services />
         <Portfolio />
+        
+        {/* قسم أحدث الكتب */}
+        <FeaturedBooks /> {/* 👈 تم إضافة القسم هنا */}
+        
         <Testimonials />
         <Blog />
         <Contact />
