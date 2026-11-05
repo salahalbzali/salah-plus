@@ -7,6 +7,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import ScrollToTop from "@/components/ScrollToTop";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import Schema from "./schema";
+import { CartProvider } from "@/lib/CartContext"; // 👈 1. تم إضافة الاستيراد هنا
 
 export const metadata: Metadata = {
   title: "صلاح بلس | تصميم جرافيكي وهوية بصرية احترافية في اليمن",
@@ -108,9 +109,9 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="google-site-verification" content="gaD1sbl3GPTI-YUYirBXUwU_78oIV5Xia04wqJTkEIs" />
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
       </head>
       <body>
@@ -121,11 +122,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <ChatBot />
-          <WhatsAppButton />
-          <ScrollToTop />
-          <MobileBottomNav />
+          {/* 👈 2. تم تغليف الموقع بـ CartProvider هنا */}
+          <CartProvider>
+            {children}
+            <ChatBot />
+            <WhatsAppButton />
+            <ScrollToTop />
+            <MobileBottomNav />
+          </CartProvider>
+          
         </ThemeProvider>
         <Analytics />
       </body>
