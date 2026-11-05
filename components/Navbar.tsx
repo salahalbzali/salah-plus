@@ -7,6 +7,7 @@ import { FiMenu, FiX, FiShoppingCart } from "react-icons/fi";
 import ThemeToggle from "./ThemeToggle";
 import SearchModal from "./SearchModal";
 import { useCart } from "@/lib/CartContext";
+import { useCurrency, CurrencyType } from "@/lib/CurrencyContext";
 
 const navLinks = [
   { href: "/#home", label: "الرئيسية" },
@@ -21,6 +22,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cartCount } = useCart();
+  const { currency, setCurrency } = useCurrency();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -50,6 +52,7 @@ export default function Navbar() {
               </div>
             </Link>
 
+            {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href} className="relative px-3 xl:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gold transition-colors duration-300 group">
@@ -57,6 +60,22 @@ export default function Navbar() {
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gold-gradient rounded-full transition-all duration-300 group-hover:w-3/4" />
                 </Link>
               ))}
+              
+              {/* أزرار تغيير العملة - سطح المكتب */}
+              <div className="flex bg-gray-100 dark:bg-navy-lighter rounded-lg p-1 mx-2">
+                {(["YER", "SAR", "USD"] as CurrencyType[]).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCurrency(c)}
+                    className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${
+                      currency === c ? "bg-gold text-navy shadow-sm" : "text-gray-500 hover:text-gold"
+                    }`}
+                  >
+                    {c === "YER" ? "يمني" : c === "SAR" ? "سعودي" : "دولار"}
+                  </button>
+                ))}
+              </div>
+
               <SearchModal />
               <Link href="/cart" className="relative p-2 rounded-xl hover:bg-gold/10 transition-colors ml-2">
                 <FiShoppingCart className="text-gray-700 dark:text-gray-300 text-lg" />
@@ -65,6 +84,7 @@ export default function Navbar() {
               <div className="mr-2 xl:mr-4"><ThemeToggle /></div>
             </div>
 
+            {/* Mobile Icons */}
             <div className="flex items-center gap-2 lg:hidden">
               <SearchModal />
               <Link href="/cart" className="relative p-2 rounded-xl hover:bg-gold/10 transition-colors">
@@ -80,6 +100,7 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -97,6 +118,28 @@ export default function Navbar() {
                     </Link>
                   ))}
                 </div>
+
+                {/* 👈 أزرار تغيير العملة - الجوال */}
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <p className="text-sm font-bold text-gray-500 mb-3">اختر عملة الدفع:</p>
+                  <div className="flex bg-gray-100 dark:bg-navy-lighter rounded-lg p-1">
+                    {(["YER", "SAR", "USD"] as CurrencyType[]).map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => {
+                          setCurrency(c);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
+                          currency === c ? "bg-gold text-navy shadow-sm" : "text-gray-500 hover:text-gold"
+                        }`}
+                      >
+                        {c === "YER" ? "يمني" : c === "SAR" ? "سعودي" : "دولار"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
               </div>
             </motion.div>
           </>
