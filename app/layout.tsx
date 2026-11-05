@@ -8,6 +8,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import Schema from "./schema";
 import { CartProvider } from "@/lib/CartContext";
+import { CurrencyProvider } from "@/lib/CurrencyContext"; // 👈 إضافة نظام العملات
 
 export const metadata: Metadata = {
   title: "صلاح بلس | تصميم جرافيكي وهوية بصرية احترافية في اليمن",
@@ -122,13 +123,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CartProvider>
-            {children}
-            <ChatBot />
-            <WhatsAppButton />
-            <ScrollToTop />
-            <MobileBottomNav />
-          </CartProvider>
+          {/* 👈 تم تغليف الموقع بـ CurrencyProvider و CartProvider */}
+          <CurrencyProvider>
+            <CartProvider>
+              {children}
+              <ChatBot />
+              <WhatsAppButton />
+              <ScrollToTop />
+              <MobileBottomNav />
+            </CartProvider>
+          </CurrencyProvider>
         </ThemeProvider>
         <Analytics />
       </body>
