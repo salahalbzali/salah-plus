@@ -1,91 +1,156 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiPlus, FiTrash2, FiArrowRight } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { FiLock, FiArrowRight, FiShoppingBag, FiExternalLink, FiActivity, FiSettings } from "react-icons/fi";
 import Link from "next/link";
 
-interface Book { id: number; title: string; author: string; price: number; image_url: string; description: string; }
+export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  
+  // حالة الإحصائيات (اختياري إذا أردت عرضها هنا)
+  const [stats, setStats] = useState({ projects: 0, clients: 0, services: 0 });
+  const [loading, setLoading] = useState(false);
 
-export default function AdminStorePage() {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isAdding, setIsAdding] = useState(false);
+  // كلمة المرور للدخول (يمكنك تغييرها من هنا)
+  const ADMIN_PASSWORD = "salah2026";
 
-  const [title, setTitle] = useState(""); const [author, setAuthor] = useState(""); const [price, setPrice] = useState(""); const [imageUrl, setImageUrl] = useState(""); const [description, setDescription] = useState("");
-
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-
-  const fetchBooks = async () => {
-    try {
-      const res = await fetch(`${supabaseUrl}/rest/v1/books?select=*&order=id.desc`, { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } });
-      const data = await res.json();
-      if (Array.isArray(data)) setBooks(data);
-    } catch (error) {}
-    setLoading(false);
+  const handleLogin = () => {
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      // حفظ حالة الدخول في المتصفح حتى لا يطلب كلمة المرور كل مرة
+      localStorage.setItem("salah-admin-auth", "true");
+    } else {
+      alert("كلمة المرور غير صحيحة");
+    }
   };
 
-  useEffect(() => { fetchBooks(); }, []);
+  // التحقق من تسجيل الدخول المسبق
+  useEffect(() => {
+    const auth = localStorage.getItem("salah-admin-auth");
+    if (auth === "true") {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
-  const handleAddBook = async (e: React.FormEvent) => {
-    e.preventDefault(); setIsAdding(true);
-    try {
-      const res = await fetch(`${supabaseUrl}/rest/v1/books`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}`, Prefer: "return=minimal" },
-        body: JSON.stringify({ title, author, price: Number(price), image_url: imageUrl, description, stock_status: "متوفر" }),
-      });
-      if (res.ok) {
-        alert("تمت إضافة الكتاب بنجاح!");
-        setTitle(""); setAuthor(""); setPrice(""); setImageUrl(""); setDescription("");
-        fetchBooks();
-      }
-    } catch (error) {}
-    setIsAdding(false);
+  // جلب الإحصائيات من API
+  useEffect(() => {
+    if (isAuthenticated) {
+      const fetchStats = async () => {
+        try {
+          const res = await fetch("/api/settings");
+          const data = await res.json();
+          if (data.stats) setStats(data.stats);
+        } catch (error) {}
+      };
+      fetchStats();
+    }
+  }, [isAuthenticated]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("salah-admin-auth");
+    setIsAuthenticated(false);
+    setPasswordInput("");
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("هل أنت متأكد من الحذف؟")) return;
-    try {
-      await fetch(`${supabaseUrl}/rest/v1/books?id=eq.${id}`, { method: "DELETE", headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } });
-      fetchBooks();
-    } catch (error) {}
-  };
+  // شاشة تسجيل الدخول
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cream dark:bg-navy" dir="rtl">
+        <div className="bg-white dark:bg-navy-lighter p-8 rounded-2xl shadow-xl text-center w-full max-w-sm border border-gray-100 dark:border-gray-800">
+          <FiLock className="text-gold text-5xl mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-navy dark:text-white mb-6">🔐 صلاحيات المدير</h2>
+          <input
+            type="password"
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            placeholder="أدخل كلمة المرور"
+            className="w-full px-4 py-3 rounded-xl mb-4 text-center bg-cream dark:bg-navy border border-gray-200 dark:border-gray-700 text-navy dark:text-white focus:border-gold outline-none"
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          />
+          <button 
+            onClick={handleLogin} 
+            className="w-full bg-gold-gradient text-navy font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-gold/20 transition-all"
+          >
+            دخول
+          </button>
+        </div>
+      </div>
+    );
+  }
 
+  // شاشة لوحة التحكم
   return (
     <div className="min-h-screen bg-cream dark:bg-navy pt-24 pb-16" dir="rtl">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <Link href="/admin" className="inline-flex items-center gap-2 text-gray-500 hover:text-gold mb-2 transition-colors"><FiArrowRight /> العودة للوحة التحكم</Link>
-          <h1 className="text-3xl font-bold text-navy dark:text-white">إدارة المتجر</h1>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 bg-white dark:bg-navy-lighter p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 h-fit">
-            <h2 className="text-xl font-bold text-navy dark:text-white mb-4">إضافة كتاب جديد</h2>
-            <form onSubmit={handleAddBook} className="space-y-4">
-              <input required placeholder="اسم الكتاب" value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-cream dark:bg-navy text-navy dark:text-white outline-none focus:border-gold" />
-              <input required placeholder="المؤلف" value={author} onChange={e => setAuthor(e.target.value)} className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-cream dark:bg-navy text-navy dark:text-white outline-none focus:border-gold" />
-              <input required type="number" placeholder="السعر" value={price} onChange={e => setPrice(e.target.value)} className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-cream dark:bg-navy text-navy dark:text-white outline-none focus:border-gold" />
-              <input required placeholder="رابط الصورة /books/name.jpg" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-cream dark:bg-navy text-navy dark:text-white outline-none focus:border-gold" dir="ltr" />
-              <textarea required placeholder="الوصف" rows={4} value={description} onChange={e => setDescription(e.target.value)} className="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-cream dark:bg-navy text-navy dark:text-white outline-none focus:border-gold" />
-              <button type="submit" disabled={isAdding} className="w-full bg-gold text-navy font-bold py-3 rounded-xl hover:bg-gold-dark transition-colors disabled:opacity-50 flex justify-center items-center gap-2">{isAdding ? "جاري الحفظ..." : <><FiPlus /> إضافة الكتاب</>}</button>
-            </form>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* رأس الصفحة */}
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-navy dark:text-white flex items-center gap-2">
+              <FiActivity className="text-gold" /> لوحة التحكم
+            </h1>
+            <p className="text-gray-500 mt-1">مرحباً بك يا صلاح، ماذا تريد أن تفعل اليوم؟</p>
           </div>
-          <div className="lg:col-span-2 bg-white dark:bg-navy-lighter rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
-            <table className="w-full text-right">
-              <thead className="bg-gray-50 dark:bg-navy border-b border-gray-100 dark:border-gray-800 text-gray-500 text-sm"><tr><th className="p-4 font-medium">الكتاب</th><th className="p-4 font-medium">السعر</th><th className="p-4 font-medium">إجراءات</th></tr></thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {books.map(book => (
-                  <tr key={book.id} className="hover:bg-gray-50 dark:hover:bg-navy/50 transition-colors">
-                    <td className="p-4 flex items-center gap-3"><img src={book.image_url} alt={book.title} className="w-10 h-14 object-cover rounded shadow-sm" /><div><div className="font-bold text-navy dark:text-white text-sm">{book.title}</div><div className="text-xs text-gray-500">{book.author}</div></div></td>
-                    <td className="p-4 text-gold font-bold">{book.price} جنيهاً</td>
-                    <td className="p-4"><button onClick={() => handleDelete(book.id)} className="text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded-lg hover:bg-red-100 transition-colors"><FiTrash2 /></button></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <button onClick={handleLogout} className="bg-red-50 text-red-500 px-4 py-2 rounded-xl hover:bg-red-100 transition-colors text-sm font-bold">
+            تسجيل الخروج
+          </button>
+        </div>
+
+        {/* بطاقات الإحصائيات */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+            <div className="text-3xl font-black text-gold mb-1">{stats.projects}+</div>
+            <div className="text-sm text-gray-500">مشروع</div>
+          </div>
+          <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+            <div className="text-3xl font-black text-gold mb-1">{stats.clients}+</div>
+            <div className="text-sm text-gray-500">عميل</div>
+          </div>
+          <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 text-center">
+            <div className="text-3xl font-black text-gold mb-1">{stats.services}</div>
+            <div className="text-sm text-gray-500">خدمات</div>
           </div>
         </div>
+
+        {/* أزرار الإدارة */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          
+          {/* إدارة المتجر */}
+          <Link href="/admin/store" className="group bg-white dark:bg-navy-lighter p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover:border-gold/50 transition-all flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gold/10 text-gold rounded-xl flex items-center justify-center group-hover:bg-gold group-hover:text-navy transition-colors">
+                <FiShoppingBag size={24} />
+              </div>
+              <div>
+                <div className="font-bold text-navy dark:text-white text-lg">إدارة متجر الكتب</div>
+                <div className="text-xs text-gray-500">إضافة، تعديل، أو حذف الكتب</div>
+              </div>
+            </div>
+            <FiArrowRight className="text-gray-300 group-hover:text-gold transition-colors" />
+          </Link>
+
+          {/* إعدادات الموقع (Supabase) */}
+          <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="group bg-white dark:bg-navy-lighter p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover:border-gold/50 transition-all flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                <FiSettings size={24} />
+              </div>
+              <div>
+                <div className="font-bold text-navy dark:text-white text-lg">الطلبات والبيانات</div>
+                <div className="text-xs text-gray-500">عرض الطلبات في Supabase</div>
+              </div>
+            </div>
+            <FiExternalLink className="text-gray-300 group-hover:text-blue-500 transition-colors" />
+          </a>
+
+          {/* العودة للموقع */}
+          <Link href="/" className="sm:col-span-2 bg-navy dark:bg-white text-white dark:text-navy font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:shadow-lg transition-all">
+            <FiExternalLink /> العودة إلى الموقع الرئيسي
+          </Link>
+        </div>
+
       </div>
     </div>
   );
