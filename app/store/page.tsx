@@ -1,41 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiInfo, FiSearch } from "react-icons/fi";
 import Link from "next/link";
-
-interface Book {
-  id: number; title: string; author: string; price: number; image_url: string; description: string;
-}
+import { booksData } from "@/lib/books";
 
 export default function StorePage() {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    async function fetchBooks() {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-      try {
-        const res = await fetch(`${supabaseUrl}/rest/v1/books?select=*`, {
-          headers: { "apikey": supabaseKey, "Authorization": `Bearer ${supabaseKey}` },
-        });
-        const data = await res.json();
-        if (Array.isArray(data)) setBooks(data);
-      } catch (error) { console.error(error); }
-      setLoading(false);
-    }
-    fetchBooks();
-  }, []);
-
-  const filteredBooks = books.filter((book) =>
+  const filteredBooks = booksData.filter((book) =>
     book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     book.author.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-cream dark:bg-navy"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div></div>;
 
   return (
     <div className="min-h-screen bg-cream dark:bg-navy pt-24 pb-16" dir="rtl">
