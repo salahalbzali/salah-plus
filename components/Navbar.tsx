@@ -10,7 +10,7 @@ import { useCart } from "@/lib/CartContext";
 
 const navLinks = [
   { href: "/#home", label: "الرئيسية" },
-  { href: "/store", label: "المتجر" },
+  { href: "/store", label: "المتجر" }, // 👈 تم إضافة رابط المتجر
   { href: "/#services", label: "الخدمات" },
   { href: "/#portfolio", label: "أعمالنا" },
   { href: "/#blog", label: "المدونة" },
@@ -20,6 +20,8 @@ const navLinks = [
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // 👈 جلب عدد الكتب في السلة
   const { cartCount } = useCart();
 
   useEffect(() => {
@@ -129,6 +131,7 @@ export default function Navbar() {
               </Link>
 
               <ThemeToggle />
+              
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
