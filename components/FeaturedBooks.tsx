@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import { FiArrowLeft } from "react-icons/fi";
 import Link from "next/link";
 import { booksData } from "@/lib/books";
+import { useCurrency } from "@/lib/CurrencyContext";
 
 export default function FeaturedBooks() {
   const books = booksData.slice(0, 4);
+  const { formatPrice } = useCurrency();
 
   return (
     <section className="py-16 sm:py-20 md:py-28 bg-cream dark:bg-navy relative overflow-hidden">
@@ -29,7 +31,7 @@ export default function FeaturedBooks() {
                 </Link>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{book.author}</p>
                 <div className="mt-auto flex items-center justify-between">
-                  <div className="text-lg font-black text-gold">{book.price} <span className="text-xs">جنيهاً</span></div>
+                  <div className="text-lg font-black text-gold">{formatPrice(book.price)}</div>
                   <Link href={`/store/${book.id}`} className="text-sm font-bold text-navy dark:text-white bg-gold/10 px-3 py-1 rounded-lg hover:bg-gold hover:text-navy transition-colors">التفاصيل</Link>
                 </div>
               </div>
