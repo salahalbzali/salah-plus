@@ -7,7 +7,7 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import ScrollToTop from "@/components/ScrollToTop";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import Schema from "./schema";
-import { CartProvider } from "@/lib/CartContext"; // 👈 1. تم إضافة الاستيراد هنا
+import { CartProvider } from "@/lib/CartContext";
 
 export const metadata: Metadata = {
   title: "صلاح بلس | تصميم جرافيكي وهوية بصرية احترافية في اليمن",
@@ -122,7 +122,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* 👈 2. تم تغليف الموقع بـ CartProvider هنا */}
           <CartProvider>
             {children}
             <ChatBot />
@@ -130,7 +129,6 @@ export default function RootLayout({
             <ScrollToTop />
             <MobileBottomNav />
           </CartProvider>
-          
         </ThemeProvider>
         <Analytics />
       </body>
