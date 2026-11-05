@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { FiInfo, FiSearch } from "react-icons/fi";
 import Link from "next/link";
 import { booksData } from "@/lib/books";
+import { useCurrency } from "@/lib/CurrencyContext";
 
 export default function StorePage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { formatPrice } = useCurrency();
 
   const filteredBooks = booksData.filter((book) =>
     book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,7 +41,7 @@ export default function StorePage() {
                   <h3 className="font-bold text-navy dark:text-white text-lg mb-1 line-clamp-1">{book.title}</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{book.author}</p>
                   <div className="mt-auto flex items-center justify-between">
-                    <div className="text-xl font-black text-gold">{book.price} <span className="text-sm">جنيهاً</span></div>
+                    <div className="text-lg font-black text-gold">{formatPrice(book.price)}</div>
                     <Link href={`/store/${book.id}`} className="bg-gold/10 text-gold p-2 rounded-xl hover:bg-gold hover:text-navy transition-colors"><FiInfo size={20} /></Link>
                   </div>
                 </div>
