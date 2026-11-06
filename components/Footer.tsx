@@ -50,7 +50,6 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden shadow-lg shadow-gold/20">
-                {/* 👈 تم تعديل مسار الصورة هنا ليكون logo-dark.png */}
                 <img 
                   src="/logo-dark.png" 
                   alt="صلاح بلس" 
@@ -68,18 +67,22 @@ export default function Footer() {
             </p>
             
             <div className="flex gap-2">
-              {socialIcons.map((social) => (
-                <motion.a 
-                  key={social.label} 
-                  href={social.href} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  whileHover={{ scale: 1.1, y: -3 }} 
-                  className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-gray-400 hover:text-gold hover:bg-gold/20 transition-all duration-300"
-                >
-                  <social.icon size={16} />
-                </motion.a>
-              ))}
+              {/* 👈 تم إصلاح الخطأ هنا */}
+              {socialIcons.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <motion.a 
+                    key={social.label} 
+                    href={social.href} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    whileHover={{ scale: 1.1, y: -3 }} 
+                    className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-gray-400 hover:text-gold hover:bg-gold/20 transition-all duration-300"
+                  >
+                    <Icon size={16} />
+                  </motion.a>
+                );
+              })}
             </div>
           </div>
 
