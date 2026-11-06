@@ -187,6 +187,36 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/2.jpg",
     author: "صلاح بلس",
   },
+  {
+    id: "ai-productivity",
+    title: "كيف تستخدم الذكاء الاصطناعي لمضاعفة إنتاجيتك في 2026؟",
+    excerpt: "اكتشف أفضل أدوات الذكاء الاصطناعي التي ستوفر عليك ساعات من العمل وتساعدك على إنجاز مهامك باحترافية.",
+    date: "2026-11-10",
+    category: "ذكاء اصطناعي",
+    readTime: "5 دقائق",
+    image: "/blog/ai-productivity.jpg",
+    author: "صلاح بلس",
+  },
+  {
+    id: "branding-for-startups",
+    title: "لماذا تعتبر الهوية البصرية أهم استثمار لمشروعك الناشئ؟",
+    excerpt: "الهوية البصرية ليست مجرد شعار، بل هي قصة علامتك التجارية. تعرف على كيفية بناء هوية تترك أثراً في العملاء.",
+    date: "2026-11-08",
+    category: "هوية بصرية",
+    readTime: "6 دقائق",
+    image: "/blog/branding-startup.jpg",
+    author: "صلاح بلس",
+  },
+  {
+    id: "programming-roadmap",
+    title: "دليلك الشامل لبدء رحلتك في عالم البرمجة من الصفر",
+    excerpt: "لا تعرف من أين تبدأ في البرمجة؟ إليك خارطة الطريق لاختيار لغة البرمجة المناسبة وكيف تصبح محترفاً.",
+    date: "2026-11-05",
+    category: "برمجة وتطوير",
+    readTime: "8 دقائق",
+    image: "/blog/programming-guide.jpg",
+    author: "صلاح بلس",
+  },
 ];
 
 export const stats: Stat[] = [
