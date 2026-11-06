@@ -8,7 +8,8 @@ import ScrollToTop from "@/components/ScrollToTop";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import Schema from "./schema";
 import { CartProvider } from "@/lib/CartContext";
-import { CurrencyProvider } from "@/lib/CurrencyContext"; // 👈 إضافة نظام العملات
+import { CurrencyProvider } from "@/lib/CurrencyContext";
+import Marquee from "@/components/Marquee"; // 👈 استيراد شريط العروض
 
 export const metadata: Metadata = {
   title: "صلاح بلس | تصميم جرافيكي وهوية بصرية احترافية في اليمن",
@@ -117,13 +118,16 @@ export default function RootLayout({
       </head>
       <body>
         <Schema />
+        
+        {/* 👈 شريط العروض المتحرك في أعلى الصفحة */}
+        <Marquee />
+
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {/* 👈 تم تغليف الموقع بـ CurrencyProvider و CartProvider */}
           <CurrencyProvider>
             <CartProvider>
               {children}
