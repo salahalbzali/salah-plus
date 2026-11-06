@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <CartProvider>
               {children}
               
-              {/* قسم التواصل والتذييل يظهران في كل الصفحات */}
+              {/* 👈 التواصل والفوتر يظهران في كل الصفحات تلقائياً */}
               <Contact />
               <Footer />
               
