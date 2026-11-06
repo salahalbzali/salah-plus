@@ -37,20 +37,15 @@ export default function CartPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // 👈 دالة الحذف الذكية (تقلل الكمية إذا كانت أكبر من 1، أو تحذف الكتاب إذا كانت 1)
   const handleRemoveItem = (item: CartItem) => {
     if (item.quantity > 1) {
-      // إذا كانت الكمية 2 أو أكثر، ننقص واحدة فقط
       updateQuantity(item.id, item.quantity - 1);
-      // نحفظ عنصر واحد فقط في حالة التراجع
       setUndoItem({ ...item, quantity: 1 });
     } else {
-      // إذا كانت الكمية 1، نحذف الكتاب بالكامل
       removeFromCart(item.id);
       setUndoItem(item);
     }
     
-    // إخفاء شريط التراجع تلقائياً بعد 5 ثوانٍ
     setTimeout(() => {
       setUndoItem(null);
     }, 5000);
@@ -67,7 +62,7 @@ export default function CartPage() {
 
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName || !customerPhone) return alert("الرجاء إدخال الاسم ورقم الهاتف");
+    if (!customerName || !customerPhone) return alert("الرجاء إدخال اسمك ورقم هاتفك لإتمام الطلب");
     setIsSubmitting(true);
     
     const payment = paymentMethods.find((p) => p.id === selectedPayment);
@@ -114,11 +109,12 @@ export default function CartPage() {
             <div className="lg:col-span-7 space-y-6">
               <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
                 <h3 className="text-lg font-bold text-navy dark:text-white mb-4 flex items-center gap-2">
-                  <FiUser className="text-gold" /> بيانات المستلم
+                  {/* 👈 تم تعديل النص هنا */}
+                  <FiUser className="text-gold" /> بيانات المشتري (أنت)
                 </h3>
                 <div className="space-y-4">
-                  <input type="text" required value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-cream dark:bg-navy border border-gray-200 dark:border-gray-700 focus:border-gold outline-none text-navy dark:text-white text-sm" placeholder="الاسم الثلاثي" />
-                  <input type="tel" required value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-cream dark:bg-navy border border-gray-200 dark:border-gray-700 focus:border-gold outline-none text-navy dark:text-white text-sm" placeholder="رقم الهاتف (واتساب)" dir="ltr" />
+                  <input type="text" required value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-cream dark:bg-navy border border-gray-200 dark:border-gray-700 focus:border-gold outline-none text-navy dark:text-white text-sm" placeholder="اكتب اسمك الثلاثي" />
+                  <input type="tel" required value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-cream dark:bg-navy border border-gray-200 dark:border-gray-700 focus:border-gold outline-none text-navy dark:text-white text-sm" placeholder="اكتب رقم هاتفك (واتساب)" dir="ltr" />
                 </div>
               </div>
 
@@ -166,7 +162,6 @@ export default function CartPage() {
                         <span className="font-bold text-navy dark:text-white text-sm w-6 text-center">{item.quantity}</span>
                         <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="text-gray-500 hover:text-gold"><FiPlus size={16} /></button>
                       </div>
-                      {/* 👈 استخدام دالة الحذف الذكية */}
                       <button onClick={() => handleRemoveItem(item)} className="text-red-500 bg-red-50 dark:bg-red-500/10 p-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors" title="حذف طلب">
                         <FiTrash2 size={18} />
                       </button>
@@ -194,7 +189,6 @@ export default function CartPage() {
         </div>
       </div>
 
-      {/* شريط التراجع */}
       <AnimatePresence>
         {undoItem && (
           <motion.div 
