@@ -9,7 +9,6 @@ import { booksData } from "@/lib/books";
 import { useCurrency } from "@/lib/CurrencyContext";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
 
 export default function BookDetailsPage() {
@@ -38,7 +37,6 @@ export default function BookDetailsPage() {
           <h1 className="text-2xl font-bold mb-4">الكتاب غير موجود</h1>
           <Link href="/store" className="text-gold hover:underline">العودة للمتجر</Link>
         </div>
-        <Footer />
       </>
     );
   }
@@ -123,18 +121,11 @@ export default function BookDetailsPage() {
             <div className="text-xs text-gray-500">السعر</div>
             <div className="text-xl font-black text-gold">{formatPrice(book.price)}</div>
           </div>
-          <button 
-            onClick={handleAddToCart} 
-            className={`flex-grow py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg ${
-              added ? "bg-green-500 text-white" : "bg-gold text-navy hover:bg-gold-dark"
-            }`}
-          >
+          <button onClick={handleAddToCart} className={`flex-grow py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg ${added ? "bg-green-500 text-white" : "bg-gold text-navy hover:bg-gold-dark"}`}>
             {added ? <><FiCheck /> تمت الإضافة</> : <><FiShoppingCart /> أضف للسلة</>}
           </button>
         </div>
       </div>
-
-      <Footer />
     </>
   );
 }
