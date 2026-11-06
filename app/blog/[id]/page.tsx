@@ -22,14 +22,14 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
 
   const shareUrl = `https://salah-plus-l7lb.vercel.app/blog/${article.id}`;
 
-  // 👈 دالة ذكية لتحويل النجوم (**) إلى نص عريض وذهبي
+  // 👈 دالة ذكية لتحويل النجوم (**) إلى نص عريض وذهبي مع حماية من أخطاء React
   const renderText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={index} className="text-gold font-bold">{part.slice(2, -2)}</strong>;
       }
-      return part;
+      return <span key={index}>{part}</span>;
     });
   };
 
@@ -101,12 +101,12 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
           <div className="max-w-none mb-12">
             {article.content.split('\n').map((paragraph, i) => {
               const trimmed = paragraph.trim();
-              if (!trimmed) return <div key={i} className="h-4"></div>;
+              if (!trimmed) return <div key={`empty-${i}`} className="h-4"></div>;
 
-              // 1. العناوين المرقمة (مثل: 1. المساعدات الذكية أو 💻 2. تعلم الأساسيات)
+              // 1. العناوين المرقمة
               if (/^(\d+\.|[^\w\s]+\s*\d+\.)/.test(trimmed) || trimmed === 'الخلاصة' || trimmed === 'المقدمة') {
                 return (
-                  <h2 key={i} className="text-2xl sm:text-3xl font-black mt-10 mb-5 text-gold border-r-4 border-gold pr-4 bg-gold/5 py-2 rounded-l-lg">
+                  <h2 key={`heading-${i}`} className="text-2xl sm:text-3xl font-black mt-10 mb-5 text-gold border-r-4 border-gold pr-4 bg-gold/5 py-2 rounded-l-lg">
                     {renderText(trimmed)}
                   </h2>
                 );
@@ -115,16 +115,16 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
               // 2. العناوين التي تبدأ بـ ##
               if (trimmed.startsWith('## ')) {
                 return (
-                  <h2 key={i} className="text-2xl sm:text-3xl font-black mt-10 mb-4 text-gold border-r-4 border-gold pr-4">
+                  <h2 key={`h2-${i}`} className="text-2xl sm:text-3xl font-black mt-10 mb-4 text-gold border-r-4 border-gold pr-4">
                     {trimmed.replace('## ', '')}
                   </h2>
                 );
               }
 
-              // 3. الأسئلة (التي تنتهي بعلامة استفهام)
+              // 3. الأسئلة
               if (trimmed.endsWith('؟')) {
                 return (
-                  <h3 key={i} className="text-xl sm:text-2xl font-bold mt-8 mb-4 text-gold">
+                  <h3 key={`question-${i}`} className="text-xl sm:text-2xl font-bold mt-8 mb-4 text-gold">
                     {renderText(trimmed)}
                   </h3>
                 );
@@ -133,7 +133,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
               // 4. الاقتباسات
               if (trimmed.startsWith('> ')) {
                 return (
-                  <blockquote key={i} className="border-r-4 border-gold bg-gold/5 rounded-xl px-6 py-5 my-6 shadow-sm">
+                  <blockquote key={`quote-${i}`} className="border-r-4 border-gold bg-gold/5 rounded-xl px-6 py-5 my-6 shadow-sm">
                     <p className="text-lg text-gray-600 dark:text-gray-400 italic leading-relaxed">
                       {renderText(trimmed.replace('> ', ''))}
                     </p>
@@ -144,7 +144,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
               // 5. القوائم النقطية
               if (trimmed.startsWith('- ')) {
                 return (
-                  <li key={i} className="mr-6 mb-3 text-lg sm:text-xl text-gray-700 dark:text-gray-300 list-disc marker:text-gold leading-relaxed">
+                  <li key={`list-${i}`} className="mr-6 mb-3 text-lg sm:text-xl text-gray-700 dark:text-gray-300 list-disc marker:text-gold leading-relaxed">
                     {renderText(trimmed.replace('- ', ''))}
                   </li>
                 );
@@ -152,7 +152,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
 
               // 6. الفقرات العادية
               return (
-                <p key={i} className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-loose mb-5">
+                <p key={`p-${i}`} className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-loose mb-5">
                   {renderText(trimmed)}
                 </p>
               );
@@ -190,7 +190,6 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
 
           {/* المقالات السابقة والتالية */}
           <div className="grid sm:grid-cols-2 gap-4">
-            {/* زر المقال التالي */}
             {nextArticle && (
               <Link
                 href={`/blog/${nextArticle.id}`}
@@ -206,7 +205,6 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
               </Link>
             )}
             
-            {/* زر المقال السابق */}
             {prevArticle && (
               <Link
                 href={`/blog/${prevArticle.id}`}
@@ -225,8 +223,6 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
           
         </article>
       </div>
-      
-      {/* 👈 لا يوجد Footer أو Contact هنا، لأنهما موجودان في layout.tsx */}
     </>
   );
 }
