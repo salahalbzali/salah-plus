@@ -2,20 +2,29 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiInfo, FiSearch } from "react-icons/fi";
+import { FiInfo, FiSearch, FiShoppingCart } from "react-icons/fi";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { booksData } from "@/lib/books";
 import { useCurrency } from "@/lib/CurrencyContext";
-import CurrencySwitcher from "@/components/CurrencySwitcher"; // 👈 استيراد الأزرار
+import { useCart } from "@/lib/CartContext";
+import CurrencySwitcher from "@/components/CurrencySwitcher";
 
 export default function StorePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { formatPrice } = useCurrency();
+  const { addToCart } = useCart();
+  const router = useRouter();
 
   const filteredBooks = booksData.filter((book) =>
     book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     book.author.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleBundle = () => {
+    booksData.forEach(book => addToCart(book));
+    router.push("/cart");
+  };
 
   return (
     <div className="min-h-screen bg-cream dark:bg-navy pt-24 pb-16" dir="rtl">
@@ -26,13 +35,28 @@ export default function StorePage() {
           <div className="w-20 h-0.5 bg-gold mx-auto rounded-full" />
         </div>
 
-        {/* 👈 شريط البحث وأزرار العملة */}
-        <div className="flex flex-col items-center justify-center gap-4 mb-12">
+        <div className="flex flex-col items-center justify-center gap-4 mb-10">
           <div className="w-full max-w-xl relative">
             <FiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
             <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="ابحث عن كتاب أو مؤلف..." className="w-full pl-4 pr-12 py-4 rounded-2xl bg-white dark:bg-navy-lighter border border-gray-200 dark:border-gray-800 focus:border-gold outline-none text-navy dark:text-white shadow-sm transition-colors" />
           </div>
           <CurrencySwitcher />
+        </div>
+
+        {/* قسم عرض الحزمة */}
+        <div className="bg-gradient-to-l from-gold/20 to-gold/5 border border-gold/30 rounded-3xl p-6 sm:p-8 mb-12 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gold/20 rounded-full blur-3xl"></div>
+          <div className="text-center sm:text-right z-10">
+            <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block animate-pulse">عرض محدود</span>
+            <h3 className="text-2xl font-bold text-navy dark:text-white mb-2">🎁 حزمة المبرمج الشامل</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">احصل على الكتب الأربعة (C++, Frontend, Backend, Python) بسعر مخفض!</p>
+          </div>
+          <div className="z-10 text-center">
+            <div className="text-3xl font-black text-gold mb-3">12,000 <span className="text-sm">ريال يمني</span></div>
+            <button onClick={handleBundle} className="bg-gold text-navy font-bold py-3 px-8 rounded-xl hover:bg-gold-dark transition-transform hover:scale-105 shadow-lg shadow-gold/20">
+              أضف الحزمة للسلة
+            </button>
+          </div>
         </div>
 
         {filteredBooks.length > 0 ? (
@@ -41,6 +65,9 @@ export default function StorePage() {
               <motion.div key={book.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-navy-lighter rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
                 <div className="relative aspect-square w-full bg-gray-100 dark:bg-gray-800">
                   <img src={book.image_url} alt={book.title} className="w-full h-full object-cover" />
+                  {book.badge && (
+                    <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">{book.badge}</div>
+                  )}
                 </div>
                 <div className="p-5 flex flex-col flex-grow">
                   <h3 className="font-bold text-navy dark:text-white text-lg mb-1 line-clamp-1">{book.title}</h3>
