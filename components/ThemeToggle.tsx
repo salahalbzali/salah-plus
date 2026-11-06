@@ -47,7 +47,8 @@ export default function ThemeToggle() {
             exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
             transition={{ duration: 0.3 }}
           >
-            <FiMoon className="text-navy text-lg sm:text-xl" />
+            {/* 👈 تم التعديل هنا: تحويل text-navy إلى text-gold */}
+            <FiMoon className="text-gold text-lg sm:text-xl" />
           </motion.div>
         )}
       </AnimatePresence>
