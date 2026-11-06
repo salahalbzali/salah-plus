@@ -9,7 +9,6 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 import Schema from "./schema";
 import { CartProvider } from "@/lib/CartContext";
 import { CurrencyProvider } from "@/lib/CurrencyContext";
-import Marquee from "@/components/Marquee"; // 👈 استيراد شريط العروض
 
 export const metadata: Metadata = {
   title: "صلاح بلس | تصميم جرافيكي وهوية بصرية احترافية في اليمن",
@@ -119,9 +118,6 @@ export default function RootLayout({
       <body>
         <Schema />
         
-        {/* 👈 شريط العروض المتحرك في أعلى الصفحة */}
-        <Marquee />
-
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
