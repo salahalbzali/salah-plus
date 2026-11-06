@@ -140,7 +140,7 @@ export default async function ArticlePage({
                 );
               }
 
-              // القوائم النقطية (تم تصحيحها لتعمل بسلاسة دون أخطاء هيكلية DOM)
+              // القوائم النقطية
               if (trimmed.startsWith('- ')) {
                 return (
                   <div key={i} className="flex items-start gap-3 mr-6 mb-3 text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
