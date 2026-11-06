@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiChevronDown } from "react-icons/fi"; // 👈 استبدلنا الأيقونات بهذه
+import { FiChevronDown } from "react-icons/fi";
 import { faqs } from "@/lib/data";
 
 export default function FAQ() {
@@ -56,12 +56,14 @@ export default function FAQ() {
                   {faq.question}
                 </span>
                 
-                {/* 👈 السهم الذي يدور عند الفتح */}
+                {/* 👈 التعديل هنا: السهم */}
                 <motion.div
                   animate={{ rotate: openIndex === index ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
                   className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
-                    openIndex === index ? "bg-gold text-navy" : "bg-gray-100 dark:bg-navy text-gray-500"
+                    openIndex === index 
+                      ? "bg-gold text-navy" // عند الفتح: خلفية ذهبية وسهم كحلي
+                      : "bg-gray-100 dark:bg-navy text-gold" // عند الإغلاق: خلفية رمادية/كحلية وسهم ذهبي
                   }`}
                 >
                   <FiChevronDown size={20} />
