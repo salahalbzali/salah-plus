@@ -81,60 +81,65 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          {/* محتوى المقال بتنسيق احترافي */}
+          {/* 👈 محتوى المقال بتنسيق ذكي ومحسن */}
           <div className="max-w-none mb-12">
             {article.content.split('\n').map((paragraph, i) => {
-              // العنوان الرئيسي - أصغر
-              if (paragraph.startsWith('## ')) {
+              const trimmed = paragraph.trim();
+              if (!trimmed) return <div key={i} className="h-4"></div>;
+
+              // 1. العناوين المرقمة (مثل: 1. المساعدات الذكية)
+              if (/^\d+\.\s/.test(trimmed)) {
                 return (
-                  <h2 key={i} className="text-xl sm:text-2xl font-black mt-8 mb-4 text-gold border-r-4 border-gold pr-4">
-                    {paragraph.replace('## ', '')}
+                  <h2 key={i} className="text-2xl sm:text-3xl font-black mt-10 mb-4 text-gold border-r-4 border-gold pr-4">
+                    {trimmed}
                   </h2>
                 );
               }
-              // العنوان الفرعي - أصغر
-              if (paragraph.startsWith('### ')) {
+
+              // 2. الأسئلة (مثل: كيف تختار الأداة المناسبة؟)
+              if (trimmed.endsWith('؟')) {
                 return (
-                  <h3 key={i} className="text-lg sm:text-xl font-bold mt-6 mb-3 text-gold/90">
-                    {paragraph.replace('### ', '')}
+                  <h3 key={i} className="text-xl sm:text-2xl font-bold mt-8 mb-4 text-gold">
+                    {trimmed}
                   </h3>
                 );
               }
-              // الاقتباسات
-              if (paragraph.startsWith('> ')) {
+
+              // 3. كلمات مفتاحية مثل "الخلاصة"
+              if (trimmed === 'الخلاصة' || trimmed === 'المقدمة') {
+                return (
+                  <h2 key={i} className="text-2xl sm:text-3xl font-black mt-10 mb-4 text-gold">
+                    {trimmed}
+                  </h2>
+                );
+              }
+
+              // 4. الاقتباسات
+              if (trimmed.startsWith('> ')) {
                 return (
                   <blockquote key={i} className="border-r-4 border-gold bg-gold/5 rounded-xl px-6 py-5 my-5">
                     <p className="text-lg text-gray-600 dark:text-gray-400 italic leading-relaxed">
-                      {paragraph.replace('> ', '')}
+                      {trimmed.replace('> ', '')}
                     </p>
                   </blockquote>
                 );
               }
-              // القوائم المرقمة - ذهبية اللون وحجم أكبر
-              if (paragraph.match(/^\d\./)) {
+
+              // 5. القوائم النقطية
+              if (trimmed.startsWith('- ')) {
                 return (
-                  <li key={i} className="mr-6 mb-4 text-xl sm:text-2xl text-gold dark:text-gold list-decimal marker:text-gold marker:font-bold leading-relaxed">
-                    {paragraph.replace(/^\d\.\s*/, '')}
+                  <li key={i} className="mr-6 mb-3 text-lg sm:text-xl text-gray-700 dark:text-gray-300 list-disc marker:text-gold leading-relaxed">
+                    {trimmed.replace('- ', '')}
                   </li>
                 );
               }
-              // القوائم النقطية - ذهبية اللون وحجم أكبر
-              if (paragraph.startsWith('- ')) {
-                return (
-                  <li key={i} className="mr-6 mb-4 text-xl sm:text-2xl text-gold dark:text-gold list-disc marker:text-gold leading-relaxed">
-                    {paragraph.replace('- ', '')}
-                  </li>
-                );
-              }
-              // نص عادي
-              if (paragraph.trim()) {
-                return (
-                  <p key={i} className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-loose mb-5">
-                    {paragraph}
-                  </p>
-                );
-              }
-              return null;
+
+              // 6. الفقرات العادية
+              return (
+                <p key={i} className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-loose mb-5">
+                  {trimmed}
+                </p>
+              );
             })}
           </div>
 
