@@ -5,7 +5,6 @@ import { FiFacebook, FiInstagram, FiHeart } from "react-icons/fi";
 import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 import { socialLinks } from "@/lib/data";
-import Image from "next/image";
 import Link from "next/link";
 
 const footerLinks = [
@@ -43,30 +42,48 @@ export default function Footer() {
   return (
     <footer className="bg-navy dark:bg-black text-white relative overflow-hidden">
       <div className="h-1 bg-gold-gradient" />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
+          
+          {/* Brand Column */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-              <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden">
-                <Image src="/logo.png" alt="صلاح بلس" fill className="object-cover" sizes="40px" />
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden shadow-lg shadow-gold/20">
+                {/* 👈 تم تعديل مسار الصورة هنا ليكون logo-dark.png */}
+                <img 
+                  src="/logo-dark.png" 
+                  alt="صلاح بلس" 
+                  className="w-full h-full object-cover" 
+                />
               </div>
               <div>
                 <span className="font-bold text-lg sm:text-xl text-white">صلاح</span>
                 <span className="text-gold text-xs sm:text-sm font-bold block">بلس</span>
               </div>
             </div>
+            
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6">
               حلول إبداعية وتقنية متكاملة تساعدك على الظهور بأفضل صورة وتحقيق أهدافك بكفاءة واحترافية.
             </p>
+            
             <div className="flex gap-2">
               {socialIcons.map((social) => (
-                <motion.a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.1, y: -3 }} className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white/10 flex items-center justify-center text-gray-400 hover:text-gold hover:bg-gold/20 transition-all duration-300">
-                  <social.icon size={14} />
+                <motion.a 
+                  key={social.label} 
+                  href={social.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  whileHover={{ scale: 1.1, y: -3 }} 
+                  className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-gray-400 hover:text-gold hover:bg-gold/20 transition-all duration-300"
+                >
+                  <social.icon size={16} />
                 </motion.a>
               ))}
             </div>
           </div>
 
+          {/* Link Columns */}
           {footerLinks.map((column) => (
             <div key={column.title}>
               <h4 className="text-white font-bold mb-3 sm:mb-4 text-base sm:text-lg">{column.title}</h4>
@@ -84,6 +101,7 @@ export default function Footer() {
           ))}
         </div>
 
+        {/* Bottom Bar */}
         <div className="mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-gray-400 text-xs sm:text-sm flex items-center gap-1">
             جميع الحقوق محفوظة © {new Date().getFullYear()}
