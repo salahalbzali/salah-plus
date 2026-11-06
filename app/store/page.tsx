@@ -9,9 +9,7 @@ import { booksData, Book } from "@/lib/books";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { useCart } from "@/lib/CartContext";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
-
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 export default function StorePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +62,6 @@ export default function StorePage() {
               <p className="text-gray-600 dark:text-gray-400 text-sm">احصل على الكتب الأربعة (C++, Frontend, Backend, Python) بسعر مخفض!</p>
             </div>
             <div className="z-10 text-center flex flex-col items-center">
-              {/* 👈 تم استخدام formatPrice هنا لكي يتغير السعر حسب العملة المختارة */}
               <div className="text-3xl font-black text-gold mb-3">
                 {formatPrice(12000)}
               </div>
@@ -78,7 +75,6 @@ export default function StorePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredBooks.map((book) => (
                 <motion.div key={book.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="group bg-white dark:bg-navy-lighter rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
-                  
                   <Link href={`/store/${book.id}`} className="relative aspect-square w-full bg-gray-100 dark:bg-gray-800 block overflow-hidden">
                     <img src={book.image_url} alt={book.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     {book.badge && (
@@ -105,17 +101,10 @@ export default function StorePage() {
                       <div className="text-lg font-black text-gold drop-shadow-sm">{formatPrice(book.price)}</div>
                       
                       <div className="flex items-center gap-2">
-                        <Link 
-                          href={`/store/${book.id}`} 
-                          className="text-xs font-bold text-navy dark:text-white bg-gray-100 dark:bg-navy px-3 py-2 rounded-xl hover:bg-gray-200 dark:hover:bg-navy/80 transition-colors"
-                        >
+                        <Link href={`/store/${book.id}`} className="text-xs font-bold text-navy dark:text-white bg-gray-100 dark:bg-navy px-3 py-2 rounded-xl hover:bg-gray-200 dark:hover:bg-navy/80 transition-colors">
                           التفاصيل
                         </Link>
-                        <button 
-                          onClick={(e) => handleAddAndGoToCart(e, book)}
-                          className="bg-gold text-navy p-2 rounded-xl hover:bg-gold-dark transition-all hover:scale-110 shadow-md shadow-gold/20 flex items-center justify-center"
-                          aria-label="أضف للسلة"
-                        >
+                        <button onClick={(e) => handleAddAndGoToCart(e, book)} className="bg-gold text-navy p-2 rounded-xl hover:bg-gold-dark transition-all hover:scale-110 shadow-md shadow-gold/20 flex items-center justify-center" aria-label="أضف للسلة">
                           <FiShoppingCart size={18} />
                         </button>
                       </div>
@@ -127,8 +116,6 @@ export default function StorePage() {
           ) : ( <div className="text-center py-20 text-gray-500">لا توجد كتب تطابق بحثك "{searchQuery}"</div> )}
         </div>
       </div>
-
-      <Footer />
     </>
   );
 }
