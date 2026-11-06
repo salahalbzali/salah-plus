@@ -8,9 +8,7 @@ import { useCart, CartItem } from "@/lib/CartContext";
 import { useCurrency } from "@/lib/CurrencyContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 const paymentMethods = [
   { id: "jawali", name: "محفظة جوالي (Jawali)", number: "775307315", desc: "تحويل فوري عبر تطبيق جوالي", image: "/payments/jawali.png" },
@@ -28,7 +26,6 @@ export default function CartPage() {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
   const [undoItem, setUndoItem] = useState<CartItem | null>(null);
 
   const copyToClipboard = (text: string) => {
@@ -45,24 +42,19 @@ export default function CartPage() {
       removeFromCart(item.id);
       setUndoItem(item);
     }
-    
-    setTimeout(() => {
-      setUndoItem(null);
-    }, 5000);
+    setTimeout(() => setUndoItem(null), 5000);
   };
 
   const handleUndo = () => {
     if (undoItem) {
-      for (let i = 0; i < undoItem.quantity; i++) {
-        addToCart(undoItem);
-      }
+      for (let i = 0; i < undoItem.quantity; i++) addToCart(undoItem);
       setUndoItem(null);
     }
   };
 
   const handleCheckout = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName || !customerPhone) return alert("الرجاء إدخال اسمك ورقم هاتفك لإتمام الطلب");
+    if (!customerName || !customerPhone) return alert("الرجاء إدخال الاسم ورقم الهاتف");
     setIsSubmitting(true);
     
     const payment = paymentMethods.find((p) => p.id === selectedPayment);
@@ -74,7 +66,6 @@ export default function CartPage() {
     message += `\n💰 الإجمالي: ${totalConverted} ${currencyName}\n💳 طريقة الدفع: ${payment?.name}\n📤 يرجى إرسال صورة الإيصال.`;
 
     window.open(`https://wa.me/967775307315?text=${encodeURIComponent(message)}`, "_blank");
-    
     setTimeout(() => { clearCart(); router.push("/store"); setIsSubmitting(false); }, 2000);
   };
 
@@ -87,7 +78,6 @@ export default function CartPage() {
           <h1 className="text-2xl font-bold text-navy dark:text-white mb-4">سلة التسوق فارغة</h1>
           <Link href="/store" className="bg-gold text-navy px-6 py-3 rounded-xl font-bold hover:bg-gold-dark transition-colors">تصفح الكتب الآن</Link>
         </div>
-        <Footer />
       </>
     );
   }
@@ -109,7 +99,6 @@ export default function CartPage() {
             <div className="lg:col-span-7 space-y-6">
               <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
                 <h3 className="text-lg font-bold text-navy dark:text-white mb-4 flex items-center gap-2">
-                  {/* 👈 تم تعديل النص هنا */}
                   <FiUser className="text-gold" /> بيانات المشتري (أنت)
                 </h3>
                 <div className="space-y-4">
@@ -191,24 +180,14 @@ export default function CartPage() {
 
       <AnimatePresence>
         {undoItem && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            exit={{ opacity: 0, y: 50 }} 
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-navy dark:bg-white text-white dark:text-navy px-6 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-4 border border-gold/30"
-          >
+          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-navy dark:bg-white text-white dark:text-navy px-6 py-3 rounded-2xl shadow-2xl z-[200] flex items-center gap-4 border border-gold/30">
             <span className="text-sm font-medium">تم حذف طلب</span>
-            <button 
-              onClick={handleUndo} 
-              className="text-gold dark:text-gold-dark font-bold hover:underline text-sm bg-gold/10 px-3 py-1 rounded-lg"
-            >
+            <button onClick={handleUndo} className="text-gold dark:text-gold-dark font-bold hover:underline text-sm bg-gold/10 px-3 py-1 rounded-lg">
               تراجع
             </button>
           </motion.div>
         )}
       </AnimatePresence>
-
-      <Footer />
     </>
   );
 }
