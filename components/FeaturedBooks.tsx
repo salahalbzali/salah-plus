@@ -39,6 +39,7 @@ export default function FeaturedBooks() {
               transition={{ delay: index * 0.1 }} 
               className="group bg-white dark:bg-navy-lighter rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:shadow-gold/10 transition-all duration-300 flex flex-col"
             >
+              {/* صورة الكتاب مع الشارة والتأثير */}
               <Link href={`/store/${book.id}`} className="block relative aspect-square w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <img src={book.image_url} alt={book.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 {book.badge && (
@@ -49,6 +50,7 @@ export default function FeaturedBooks() {
               </Link>
 
               <div className="p-5 flex flex-col flex-grow">
+                {/* التقييم بالنجوم */}
                 <div className="flex items-center gap-1 mb-2">
                   <div className="flex text-gold">
                     {[...Array(5)].map((_, i) => (
@@ -66,13 +68,23 @@ export default function FeaturedBooks() {
                 <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
                   <div className="text-lg font-black text-gold drop-shadow-sm">{formatPrice(book.price)}</div>
                   
-                  <button 
-                    onClick={(e) => handleAddAndGoToCart(e, book)}
-                    className="bg-gold text-navy p-2 rounded-xl hover:bg-gold-dark transition-all hover:scale-110 shadow-md shadow-gold/20 flex items-center justify-center"
-                    aria-label="أضف للسلة"
-                  >
-                    <FiShoppingCart size={18} />
-                  </button>
+                  {/* 👈 الأزرار: التفاصيل والسلة */}
+                  <div className="flex items-center gap-2">
+                    <Link 
+                      href={`/store/${book.id}`} 
+                      className="text-xs font-bold text-navy dark:text-white bg-gray-100 dark:bg-navy px-3 py-2 rounded-xl hover:bg-gray-200 dark:hover:bg-navy/80 transition-colors"
+                    >
+                      التفاصيل
+                    </Link>
+
+                    <button 
+                      onClick={(e) => handleAddAndGoToCart(e, book)}
+                      className="bg-gold text-navy p-2 rounded-xl hover:bg-gold-dark transition-all hover:scale-110 shadow-md shadow-gold/20 flex items-center justify-center"
+                      aria-label="أضف للسلة"
+                    >
+                      <FiShoppingCart size={18} />
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
