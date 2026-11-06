@@ -4,6 +4,7 @@ import Stats from "@/components/Stats";
 import Services from "@/components/Services";
 import Portfolio from "@/components/Portfolio";
 import FeaturedBooks from "@/components/FeaturedBooks";
+import AboutAuthor from "@/components/AboutAuthor";
 import Testimonials from "@/components/Testimonials";
 import Blog from "@/components/Blog";
 import Contact from "@/components/Contact";
@@ -20,6 +21,7 @@ export default function HomePage() {
         <Services />
         <Portfolio />
         <FeaturedBooks />
+        <AboutAuthor />
         <Testimonials />
         <Blog />
         <Contact />
