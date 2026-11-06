@@ -8,8 +8,6 @@ import { useCart } from "@/lib/CartContext";
 import { booksData } from "@/lib/books";
 import { useCurrency } from "@/lib/CurrencyContext";
 import Link from "next/link";
-
-// استيراد القائمة العلوية والتذييل وأزرار العملة
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CurrencySwitcher from "@/components/CurrencySwitcher";
@@ -45,7 +43,6 @@ export default function BookDetailsPage() {
     );
   }
 
-  // دالة لتنسيق الوصف وتلوين العناوين
   const renderDescription = (text: string) => {
     return text.split('\n').map((line, index) => {
       const trimmedLine = line.trim();
@@ -80,19 +77,16 @@ export default function BookDetailsPage() {
           </button>
           
           <div className="grid md:grid-cols-2 gap-10">
-            {/* صورة الكتاب */}
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="bg-white dark:bg-navy-lighter rounded-2xl p-4 border border-gray-100 dark:border-gray-800 shadow-sm flex items-start justify-center h-fit">
               <div className="relative aspect-square w-full">
                 <img src={book.image_url} alt={book.title} className="absolute inset-0 w-full h-full object-cover rounded-xl" />
               </div>
             </motion.div>
             
-            {/* تفاصيل الكتاب */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex flex-col">
               <h1 className="text-3xl sm:text-4xl font-bold text-navy dark:text-white mb-3 leading-snug">{book.title}</h1>
               <p className="text-gray-500 dark:text-gray-400 mb-4 text-lg">{book.author}</p>
               
-              {/* 👈 السعر وأزرار العملة بجواره */}
               <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-gray-200 dark:border-gray-800">
                 <div className="text-3xl font-black text-gold">
                   {formatPrice(book.price)}
@@ -104,7 +98,6 @@ export default function BookDetailsPage() {
                 {renderDescription(book.description)}
               </div>
               
-              {/* صندوق الإضافة للسلة */}
               <div className="bg-white dark:bg-navy-lighter p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-gray-600 dark:text-gray-400 font-medium">الكمية</span>
@@ -120,6 +113,24 @@ export default function BookDetailsPage() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </div>
+
+      {/* 👈 شريط الإضافة الثابت للجوال */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-navy border-t border-gray-200 dark:border-gray-800 p-4 z-40 shadow-[0_-10px_20px_rgba(0,0,0,0.1)]">
+        <div className="flex items-center justify-between gap-4 max-w-6xl mx-auto">
+          <div>
+            <div className="text-xs text-gray-500">السعر</div>
+            <div className="text-xl font-black text-gold">{formatPrice(book.price)}</div>
+          </div>
+          <button 
+            onClick={handleAddToCart} 
+            className={`flex-grow py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg ${
+              added ? "bg-green-500 text-white" : "bg-gold text-navy hover:bg-gold-dark"
+            }`}
+          >
+            {added ? <><FiCheck /> تمت الإضافة</> : <><FiShoppingCart /> أضف للسلة</>}
+          </button>
         </div>
       </div>
 
