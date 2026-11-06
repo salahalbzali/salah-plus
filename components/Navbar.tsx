@@ -10,12 +10,12 @@ import { useCart } from "@/lib/CartContext";
 import { useCurrency, CurrencyType } from "@/lib/CurrencyContext";
 
 const navLinks = [
-  { href: "/#home", label: "الرئيسية" },
+  { href: "/", label: "الرئيسية" },
   { href: "/store", label: "المتجر" },
-  { href: "/#services", label: "الخدمات" },
-  { href: "/#portfolio", label: "أعمالنا" },
-  { href: "/#blog", label: "المدونة" },
-  { href: "/#contact", label: "تواصل معنا" },
+  { href: "/services", label: "الخدمات" },
+  { href: "/portfolio", label: "أعمالنا" },
+  { href: "/blog", label: "المدونة" },
+  { href: "#contact", label: "تواصل معنا" }, // ينزل لقسم التواصل في نفس الصفحة
 ];
 
 export default function Navbar() {
@@ -41,7 +41,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
-            <Link href="/#home" className="flex items-center gap-2 sm:gap-3 group">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
               <motion.div whileHover={{ rotate: -10, scale: 1.1 }} className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl overflow-hidden shadow-lg shadow-gold/30">
                 <img src="/logo-light.png" alt="صلاح بلس" className="w-full h-full object-cover dark:hidden" />
                 <img src="/logo-dark.png" alt="صلاح بلس" className="w-full h-full object-cover hidden dark:block" />
@@ -52,7 +52,6 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href} className="relative px-3 xl:px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gold transition-colors duration-300 group">
@@ -61,16 +60,9 @@ export default function Navbar() {
                 </Link>
               ))}
               
-              {/* أزرار تغيير العملة - سطح المكتب */}
               <div className="flex bg-gray-100 dark:bg-navy-lighter rounded-lg p-1 mx-2">
                 {(["YER", "SAR", "USD"] as CurrencyType[]).map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setCurrency(c)}
-                    className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${
-                      currency === c ? "bg-gold text-navy shadow-sm" : "text-gray-500 hover:text-gold"
-                    }`}
-                  >
+                  <button key={c} onClick={() => setCurrency(c)} className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${currency === c ? "bg-gold text-navy shadow-sm" : "text-gray-500 hover:text-gold"}`}>
                     {c === "YER" ? "يمني" : c === "SAR" ? "سعودي" : "دولار"}
                   </button>
                 ))}
@@ -84,7 +76,6 @@ export default function Navbar() {
               <div className="mr-2 xl:mr-4"><ThemeToggle /></div>
             </div>
 
-            {/* Mobile Icons */}
             <div className="flex items-center gap-2 lg:hidden">
               <SearchModal />
               <Link href="/cart" className="relative p-2 rounded-xl hover:bg-gold/10 transition-colors">
@@ -100,7 +91,6 @@ export default function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
@@ -118,28 +108,16 @@ export default function Navbar() {
                     </Link>
                   ))}
                 </div>
-
-                {/* 👈 أزرار تغيير العملة - الجوال */}
                 <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                   <p className="text-sm font-bold text-gray-500 mb-3">اختر عملة الدفع:</p>
                   <div className="flex bg-gray-100 dark:bg-navy-lighter rounded-lg p-1">
                     {(["YER", "SAR", "USD"] as CurrencyType[]).map((c) => (
-                      <button
-                        key={c}
-                        onClick={() => {
-                          setCurrency(c);
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
-                          currency === c ? "bg-gold text-navy shadow-sm" : "text-gray-500 hover:text-gold"
-                        }`}
-                      >
+                      <button key={c} onClick={() => { setCurrency(c); setIsMobileMenuOpen(false); }} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${currency === c ? "bg-gold text-navy shadow-sm" : "text-gray-500 hover:text-gold"}`}>
                         {c === "YER" ? "يمني" : c === "SAR" ? "سعودي" : "دولار"}
                       </button>
                     ))}
                   </div>
                 </div>
-
               </div>
             </motion.div>
           </>
