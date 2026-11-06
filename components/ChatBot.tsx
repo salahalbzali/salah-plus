@@ -1,137 +1,149 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { FiSend, FiX, FiTrash2, FiMessageSquare } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiSend, FiX, FiTrash2, FiMessageSquare, FiExternalLink } from "react-icons/fi";
+import Link from "next/link";
 
 // 👈 متغيرات البيئة
 const phone = process.env.NEXT_PUBLIC_PHONE || "+967775307315";
-const email = process.env.NEXT_PUBLIC_EMAIL || "salah201617@gmail.com";
-const siteUrl = "https://salah-plus.vercel.app";
+const email = process.env.NEXT_PUBLIC_EMAIL || "salahplus2026@gmail.com";
+const siteUrl = "https://salah-plus-l7lb.vercel.app";
 
 type Message = {
   text: string;
   sender: "user" | "bot";
+  link?: { text: string; url: string }; // 👈 إضافة خاصية الروابط
 };
 
-const responses: Record<string, string> = {
-  // 1. تحيات وترحيب
-  "مرحبا": "مرحباً بك في صلاح بلس 👋 كيف يمكنني مساعدتك؟",
-  "السلام عليكم": "وعليكم السلام ورحمة الله وبركاته 🌟 أهلاً بك في صلاح بلس!",
-  "اهلا": "أهلاً وسهلاً! 😊 تفضل بسؤالك.",
-  "صباح الخير": "صباح النور والياسمين 🌞 كيف أقدر أخدمك؟",
-  "مساء الخير": "مساء الفل 🌙 تفضل، أنا جاهز لمساعدتك.",
-
-  // 2. أسئلة عن الخدمات
-  "ما الخدمات": "نقدم التصميم الجرافيكي، الهويات البصرية، العروض التقديمية، تصميم الكتب، الخدمات المكتبية، الدعم التقني، وحلول الذكاء الاصطناعي.",
-  "خدماتكم": "خدماتنا تشمل: 1. التصميم الجرافيكي 2. الهويات البصرية 3. العروض التقديمية 4. تصميم الكتب التعليمية 5. الخدمات المكتبية 6. الدعم التقني 7. حلول الذكاء الاصطناعي. أيها يهمك؟",
-  "التصميم": "نقدم خدمة التصميم الجرافيكي من منشورات، بروشورات، بنرات، وهويات بصرية كاملة للشركات.",
-  "الهوية البصرية": "نوفر تصميم هوية بصرية كاملة تشمل الشعار، الألوان، الخطوط، ودليل الهوية. اطلبها الآن من قسم 'تواصل معنا'.",
-  "العروض التقديمية": "نصمم عروض PowerPoint احترافية، إنفوجرافيك، وعروض فيديو قصيرة.",
-  "الذكاء الاصطناعي": "نطور حلول ذكاء اصطناعي مخصصة مثل بوتات ChatGPT، أتمتة المهام، وتحليل البيانات.",
-
-  // 3. أسئلة عن الأسعار
-  "كم السعر": "الأسعار تعتمد على نوع المشروع وحجمه. تواصل معنا من قسم 'تواصل معنا' وسنعطيك عرض سعر دقيق.",
-  "الاسعار": "لكل مشروع سعره الخاص حسب التفاصيل. راسلنا من نموذج التواصل نحسب لك التكلفة بدقة.",
-  "بكم": "يعتمد السعر على متطلبات المشروع. أرسل لنا التفاصيل من قسم التواصل نحضر لك عرض سعر مجاني.",
-  "التكلفة": "التكلفة تختلف حسب نوع الخدمة وحجم العمل. تواصل معنا نحسبها لك بدقة بدون أي التزام.",
-
-  // 4. أسئلة عن طلب الخدمة
-  "كيف اطلب": "سهل جداً! اذهب إلى قسم 'تواصل معنا' في الموقع، واملأ النموذج باسمك وطلبك. سنرد عليك قريباً.",
-  "طلب خدمة": "لطلب أي خدمة، املأ نموذج التواصل في قسم 'اتصل بنا'، واكتب تفاصيل مشروعك.",
-  "اريد تصميم": "رائع! اذهب إلى 'تواصل معنا' واكتب نوع التصميم اللي تحتاجه. فريقنا جاهز للإبداع 🎨",
-
-  // 5. أسئلة عن الموقع
-  "الموقع": `تفضل رابط موقعنا: ${siteUrl} 🚀`,
-  "رابط الموقع": `يمكنك زيارة موقعنا من هنا: ${siteUrl}`,
-  "موقعكم": `رابط موقعنا الرسمي: ${siteUrl}`,
-  "الموقع الجغرافي": "يمكنك الوصول إلينا عبر خرائط جوجل. اسألنا عن الرابط من فضلك 📍",
-  "العنوان": `موقعنا: اليمن. للتواصل المباشر: واتساب ${phone}`,
-
-  // 6. أسئلة عن التواصل 👈 استخدم المتغيرات
-  "التواصل": `يمكنك التواصل معنا عبر: 📧 البريد: ${email} | 📱 واتساب: ${phone} | أو نموذج التواصل في الموقع.`,
-  "كيف اتواصل": `عدة طرق: 1. نموذج التواصل في الموقع 2. واتساب: ${phone} 3. بريد: ${email}`,
-  "رقم الجوال": `رقمنا للواتساب: ${phone} 📱`,
-  "الإيميل": `بريدنا الإلكتروني: ${email} 📧`,
-  "واتساب": `تواصل معنا واتساب: ${phone}`,
-
-  // 7. أسئلة عن مدة التنفيذ
-  "مدة التنفيذ": "تختلف حسب حجم المشروع. المشاريع الصغيرة: 1-3 أيام، المتوسطة: 3-7 أيام، الكبيرة: تحدد بعد المعاينة.",
-  "متى يخلص": "المشاريع الصغيرة تخلص في يومين إلى ثلاثة أيام. الكبيرة تاخذ أسبوع. بنتفق على الموعد بالضبط 📅",
-  "سرعة التسليم": "نحن نضمن التسليم في الوقت المتفق عليه. للعاجل، نقدم خدمة 'مستعجل' خلال 24 ساعة.",
-
-  // 8. أسئلة عن ضمان الجودة
-  "ضمان": "نعم، جميع خدماتنا عليها ضمان جودة. لو ما عجبك الشغل، نعدله لك مجاناً.",
-  "تعديل": "نقدم تعديلات مجانية حتى ترضى تماماً عن التصميم. راحتك تهمنا 👍",
-  "ضمان الجودة": "نقدم ضمان على جميع خدماتنا. التعديلات مفتوحة حتى ترضى.",
-
-  // 9. أسئلة عن الدفع
-  "الدفع": "نقبل الدفع عبر التحويل البنكي، الحوالات، أو الدفع عند الاستلام حسب الاتفاق.",
-  "طرق الدفع": "التحويل البنكي، الحوالات المالية، أو الدفع نقداً حسب منطقتك.",
-  "الدفع مقدم": "نعم، نطلب عربون 50% عند بدء العمل، والباقي عند التسليم.",
-
-  // 10. أسئلة عامة
-  "من أنت": "أنا مساعد صلاح بلس الذكي! 🤖 جاهز للإجابة على كل أسئلتك عن خدماتنا.",
-  "شكرا": "العفو! 🌹 أي خدمة ثانية؟",
-  "وداعا": "مع السلامة! 🖐️ نتمنى لك يوماً سعيداً.",
-  "بااي": "الله يحفظك! 👋",
-  "مع السلامة": "مع السلامة! ننتظر زيارتك القادمة 🌟",
-
-  // 11. 🇾🇪 لهجات يمنية شائعة
-  "متى ينجز": "حسب حجم المشروع. الصغير يومين، الكبير أسبوع. بنعطيك موعد محدد بعد ما نشوف التفاصيل 👍",
-  "متى تكمل": "بنكمل حسب الاتفاق. الصغير 48 ساعة، الكبير أسبوع. كل شي بالاتفاق 👌",
-  "كم حق": "حق التصميم يبدأ من 50$ وفوق حسب الشغل. أرسل لنا التفاصيل وبنعطيك سعر دقيق ✨",
-  "شقد": "شقد السعر؟ يعتمد على الخدمة. راسلنا من نموذج التواصل وبنرد عليك فوراً ⚡",
-  "عندك": "ايوا عندنا جميع الخدمات. وش تحتاج بالضبط؟ 🔥",
-  "فيه": "ايوا فيه! كل خدمات التصميم والدعم التقني موجودة. اطلب اللي تبي 🎨",
-  "موجود": "موجودين للخدمة 24 ساعة. تفضل بطلبك 👋",
-  "ابي": "تفضل! ايش الخدمة اللي تبغاها؟ بنساعدك فوراً 🌟",
-  "ابغا": "ابغا شي معين؟ اطلب وبنخدمك بعيوننا 😊",
-  "شلون": "شلون تطلب؟ سهل! روح صفحة 'تواصل معنا' واملأ البيانات. بنرد عليك بسرعة 🚀",
-  "كيف اقدر": `تقدر تتواصل معنا من نموذج التواصل، أو واتساب: ${phone} 📱`,
-  "يسلمو": "الله يسلمك ويحفظك! 🌹 تحت الخدمة دايم",
-  "مشكور": "العفو! الشكر لله. حاضرين لأي خدمة ثانية 🖐️",
-  "صنعاء": "أهلًا بيك من أرض الإيمان صنعاء 🇾🇪❤️",
-  "حضرموت": "ونعم والله بأهل حضرموت الكرم والنخوة 🇾🇪",
-  "تعز": "أهلًا وسهلًا بأهل تعز الصمود والعزة 🇾🇪",
-  "عدن": "حيا الله أهل عدن البهجة 🇾🇪☀️",
-  "يامرحبا": "يامرحبا مليون! تفضل بطلبك 🎉",
-
-  // 12. 🇾🇪 عبارات الطلب والبدء
-  "بشتي منك": "أنا حاضر! أشتي إيش بالضبط؟ قولي وبنضبطه لك 👍",
-  "أشتي": "تفضل أمرك! أشتي تصميم وإلا شي ثاني؟",
-  "يا خبير": "تسلم يا غالي! 🌹 أنا تحت أمرك. وش تحب نسوي لك؟",
-  "يا فنان": "الله يسعدك! شرف لي أخدمك. تفضل بطلبك 🎨",
-  "تضبط لي": "بإذن الله أضبطه لك أحسن ضبط! 😎 عطني تفاصيل العمل",
-  "حاجة مرتبة": "مرتبة ولا يهمك! بنسوي لك شغل مرتب ونظيف 👌",
-  "منتكة": "بإذن الله تطلع منتكة! 😍 عطني تفاصيل المشروع وبنبدع",
-  "شيء منتك": "ولا يهمك! بنسوي لك شغل منتك بإذن الله ✨",
-
-  // 13. 🇾🇪 عبارات طلب التعديل
-  "تعدل الحتة": "أيوا! أي حتة تبغى تعدلها؟ قولي وبنعدلها فوراً 🔧",
-  "مش راكب": "فهمت عليك! بنغير اللون ونخليه راكب على العين والراس 🎯",
-  "أيش رأيك": "رأيي إنه فكرة ممتازة! خلينا نضيف اللمسة هذي 👍",
-  "عدلها على السريع": "ولا يهمك! بنخلص التعديل على السريع 🚀",
-  "معي شغل": "فاهمك! بنضبطها لك بسرعة وما بنعطلك ⚡",
-
-  // 14. 🇾🇪 عبارات الرضا والتقدير
-  "ما قصرت": "العفو! هذا واجبنا 🌹",
-  "يعطيك العافية": "الله يعافيك ويسلمك! حاضرين لأي شيء ثاني",
-  "تسلم يدك": "تسلم! الأهم إنه عجبك الشغل 😊",
-  "شغل نظيف": "الله يسعدك! بنضل دايم عند حسن ظنك",
-  "هذا هو المطلوب": "الحمد لله إنه عجبك! أي تعديل ثاني؟",
-  "بيض الله وجهك": "ووجهك أبيض يا غالي! شرف كبير لي 🤲",
-
-  // 15. 🇾🇪 عبارات الاستفسار عن السعر
-  "كم تشتي": "الأسعار تبدأ من 50$ حسب المشروع. راسلني بالتفاصيل وبنقولك بالضبط 💰",
-  "كم الحساب": "الحساب حسب نوع الشغل. أرسل تفاصيل مشروعك نحسبها لك 📊",
-  "تنزل لنا في السعر": "ولا يهمك! بنشوف اللي يناسب ميزانيتك. راسلنا ونتفق 🤝",
+// دالة تنظيف النص العربي (لتوحيد الهمزات والتاء المربوطة والياء)
+const normalizeArabic = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/[أإآ]/g, "ا")
+    .replace(/ة/g, "ه")
+    .replace(/ى/g, "ي")
+    .replace(/[ًٌٍَُِّْ]/g, "") // إزالة التشكيل
+    .trim();
 };
+
+// دالة حساب التشابه (Levenshtein Distance) لاكتشاف الأخطاء الإملائية
+const getSimilarity = (s1: string, s2: string) => {
+  const a = normalizeArabic(s1);
+  const b = normalizeArabic(s2);
+  if (a.length === 0) return b.length === 0 ? 1 : 0;
+  if (b.length === 0) return 0;
+
+  const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+  for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+  for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+
+  for (let j = 1; j <= b.length; j++) {
+    for (let i = 1; i <= a.length; i++) {
+      const substitutionCost = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[j][i] = Math.min(
+        matrix[j][i - 1] + 1,
+        matrix[j - 1][i] + 1,
+        matrix[j - 1][i - 1] + substitutionCost
+      );
+    }
+  }
+  const distance = matrix[b.length][a.length];
+  return 1 - distance / Math.max(a.length, b.length);
+};
+
+// 👈 قاعدة البيانات الشاملة (الخدمات، المتجر، الأسعار، اللهجة اليمنية...)
+const botData = [
+  {
+    topic: "الترحيب",
+    keywords: ["مرحبا", "السلام", "عليكم", "اهلا", "هلا", "صباح", "مساء", "hi", "hello", "كيفك", "كيف حالك", "يا هلا"],
+    response: "مرحباً بك في صلاح بلس! 👋 كيف يمكنني مساعدتك اليوم؟",
+  },
+  {
+    topic: "من هو صلاح بلس",
+    keywords: ["من انت", "من انتم", "مين صلاح", "صلاح بلس", "عن الموقع", "مين صاحب الموقع", "وش تسوون", "من هو"],
+    response: "صلاح بلس هي منصة تقدم حلولاً إبداعية وتقنية متكاملة (تصميم، برمجة، كتب تعليمية، وذكاء اصطناعي) بقيادة م. صلاح عبده البزالي. 🚀",
+  },
+  {
+    topic: "المتجر والكتب",
+    keywords: ["كتاب", "كتب", "متجر", "شراء", "طلب", "اشتري", "ابغى كتاب", "عندكم كتب", "كورس", "منهج", "برمجه", "بايثون", "python", "cpp", "سي بلس", "front", "back"],
+    response: "نوفر لك كتباً تعليمية احترافية (C++, Front-End, Back-End, Python والذكاء الاصطناعي). يمكنك تصفحها وطلبها مباشرة. 📚",
+    link: { text: "تصفح المتجر الآن", url: "/store" }
+  },
+  {
+    topic: "الخدمات والتصميم",
+    keywords: ["خدمات", "خدمه", "تصميم", "جرافيك", "فوتوشوب", "بوستات", "اعلانات", "هويه", "شعار", "لوجو", "براند", "عروض", "بوربوينت", "انفوجرافيك", "مطبوعات", "طباعه"],
+    response: "نقدم خدمات التصميم الجرافيكي، الهوية البصرية، العروض التقديمية، وتصميم الكتب والمناهج. 🎨",
+    link: { text: "استكشف خدماتنا", url: "/#services" }
+  },
+  {
+    topic: "الأسعار",
+    keywords: ["سعر", "بكم", "تكلفه", "كم", "تسعير", "اسعار", "كم السعر", "بكم الكتاب", "كم يكلف", "غالي", "رخيص", "خصم", "عروض", "شقد", "كم حق", "كم تشتي", "كم الحساب"],
+    response: `أسعار الكتب واضحة في المتجر. أما أسعار الخدمات فتعتمد على حجم المشروع. تواصل معنا للحصول على عرض سعر دقيق. 💰\nأو راسلنا واتساب: ${phone}`,
+    link: { text: "الذهاب للمتجر", url: "/store" }
+  },
+  {
+    topic: "طرق الدفع",
+    keywords: ["دفع", "محفظه", "جوالي", "كريمي", "جيب", "تحويل", "حواله", "بنك", "فيزا", "كاش", "كيف ادفع", "طريقه الدفع"],
+    response: "نقبل الدفع عبر المحافظ الإلكترونية (جوالي، جيب، حاسب كريمي) أو عبر شبكات الحوالات. بعد الطلب سيظهر لك رقم المحفظة. 💳",
+  },
+  {
+    topic: "وقت التنفيذ والتسليم",
+    keywords: ["متى", "وقت", "مده", "تسليم", "جاهز", "كم ياخذ", "كم يوم", "متى يخلص", "متى ينتهي", "عاجل", "سريع", "متى ينجز", "متى تكمل"],
+    response: "مدة تنفيذ الكتب والخدمات تختلف حسب الطلب. الكتب الجاهزة فورية، أما التصاميم والمشاريع فتحتاج من يوم إلى أسبوع حسب حجمها. ⏱️",
+  },
+  {
+    topic: "الشحن والتوصيل",
+    keywords: ["شحن", "توصيل", "تسليم", "يوصل", "متى يوصل", "صنعاء", "عدن", "تعز", "حضرموت", "المحافظات", "داخل اليمن"],
+    response: "نوفر خدمة الشحن لجميع المحافظات اليمنية. التوصيل داخل صنعاء سريع، وباقي المحافظات عبر شركات الشحن. 🚚",
+  },
+  {
+    topic: "مواعيد العمل",
+    keywords: ["دوام", "مواعيد", "وقت", "مفتوح", "مغلق", "اجازه", "جمعه", "السبت", "متى تفتحون", "ساعات العمل"],
+    response: "مواعيد العمل من السبت إلى الخميس (9:00 ص - 9:30 م)، والجمعة عطلة رسمية. 🕐",
+  },
+  {
+    topic: "التواصل والموقع",
+    keywords: ["تواصل", "رقم", "واتساب", "ايميل", "بريد", "اتصل", "جوال", "تلفون", "وين انتم", "موقعكم", "عنوان", "مكان", "فرع", "رابط الموقع", "الموقع الجغرافي"],
+    response: `يسعدنا تواصلك! يمكنك مراسلتنا عبر:\n📱 واتساب: ${phone}\n📧 البريد: ${email}\n🌐 الموقع: ${siteUrl}`,
+    link: { text: "الذهاب لصفحة التواصل", url: "/#contact" }
+  },
+  {
+    topic: "الأعمال السابقة",
+    keywords: ["اعمال", "شغلكم", "مشاريع", "معرض", "صور", "سابقه", "نماذج", "بورتفوليو", "شفنا شغلكم"],
+    response: "فخورون بأعمالنا السابقة! يمكنك تصفح معرض أعمالنا لمشاهدة أحدث المشاريع والتصاميم. 👀",
+    link: { text: "تصفح معرض الأعمال", url: "/#portfolio" }
+  },
+  {
+    topic: "المدونة والمقالات",
+    keywords: ["مقالات", "مدونه", "اقرا", "معلومات", "دروس", "نصائح", "تعلم"],
+    response: "لدينا مدونة مليئة بالمقالات والدروس التقنية في التصميم والبرمجة والذكاء الاصطناعي. تصفحها الآن! 📝",
+    link: { text: "قراءة المقالات", url: "/#blog" }
+  },
+  {
+    topic: "ضمان الجودة والتعديل",
+    keywords: ["ضمان", "تعديل", "تعدل الحته", "مش راكب", "عدلها على السريع", "ضمان الجودة"],
+    response: "نعم، جميع خدماتنا عليها ضمان جودة. لو ما عجبك الشغل، نعدله لك مجاناً حتى ترضى تماماً. 👍",
+  },
+  {
+    topic: "الشكر والرضا",
+    keywords: ["شكرا", "مشكور", "يعطيك", "تسلم", "جزاك", "الله خير", "يسلمو", "ممتاز", "رائع", "تمام", "ما قصرت", "يعطيك العافيه", "شغل نظيف", "بيض الله وجهك"],
+    response: "العفو! الشكر لله. حاضرين لأي خدمة ثانية. 🌹",
+  },
+  {
+    topic: "الوداع",
+    keywords: ["مع السلامه", "باي", "وداعا", "الى اللقاء", "سلام"],
+    response: "مع السلامة! 👋 نتمنى لك يوماً سعيداً، وننتظر زيارتك القادمة لموقع صلاح بلس.",
+  },
+];
+
+const suggestions = ["الكتب المتوفرة 📚", "خدماتكم 🎨", "أسعاركم 💰", "تواصل معنا 📞"];
 
 export default function ChatBot() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { text: "مرحباً 👋 أنا مساعد صلاح بلس، كيف يمكنني مساعدتك؟", sender: "bot" },
+    { text: "مرحباً 👋 أنا مساعد صلاح بلس الذكي، كيف يمكنني مساعدتك؟", sender: "bot" },
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -147,8 +159,8 @@ export default function ChatBot() {
   }, []);
 
   useEffect(() => {
-    if (messages.length > 100) {
-      setMessages((prev) => prev.slice(-100));
+    if (messages.length > 50) {
+      setMessages((prev) => prev.slice(-50));
     } else {
       localStorage.setItem("salah-chat", JSON.stringify(messages));
     }
@@ -158,34 +170,54 @@ export default function ChatBot() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const getBotReply = (userInput: string): string => {
-    const lowerInput = userInput.toLowerCase();
-    const matchedKey = Object.keys(responses).find((key) =>
-      lowerInput.includes(key.toLowerCase())
-    );
-    return matchedKey
-      ? responses[matchedKey]
-      : "شكراً لتواصلك. سيقوم فريق صلاح بلس بالرد عليك قريباً.";
+  // عقل البوت الذكي
+  const getBotReply = (userInput: string): { text: string; link?: any } => {
+    const cleanInput = normalizeArabic(userInput);
+    let bestMatch = { score: 0, data: null as any };
+
+    for (const item of botData) {
+      for (const keyword of item.keywords) {
+        const score = getSimilarity(cleanInput, keyword);
+        if (score > bestMatch.score) {
+          bestMatch = { score, data: item };
+        }
+      }
+    }
+
+    if (bestMatch.score > 0.8) {
+      return { text: bestMatch.data.response, link: bestMatch.data.link };
+    }
+
+    if (bestMatch.score > 0.5) {
+      return { 
+        text: `هل تقصد أنك تسأل عن "${bestMatch.data.topic}"؟ 🤔\n\n${bestMatch.data.response}`, 
+        link: bestMatch.data.link 
+      };
+    }
+
+    return { 
+      text: "شكراً لتواصلك. سيقوم فريق صلاح بلس بالرد عليك قريباً.\nيمكنك تجربة كتابة كلمات أبسط مثل: (كتب، خدمات، أسعار، تواصل) أو استخدام الأزرار بالأسفل. 😊" 
+    };
   };
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+  const sendMessage = async (text: string) => {
+    if (!text.trim()) return;
 
-    const userMessage: Message = { text: input, sender: "user" };
+    const userMessage: Message = { text, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsTyping(true);
 
     setTimeout(() => {
-      const reply = getBotReply(userMessage.text);
-      setMessages((prev) => [...prev, { text: reply, sender: "bot" }]);
+      const reply = getBotReply(text);
+      setMessages((prev) => [...prev, { text: reply.text, sender: "bot", link: reply.link }]);
       setIsTyping(false);
     }, 800);
   };
 
   const clearChat = () => {
     setMessages([
-      { text: "مرحباً 👋 أنا مساعد صلاح بلس، كيف يمكنني مساعدتك؟", sender: "bot" },
+      { text: "مرحباً 👋 أنا مساعد صلاح بلس الذكي، كيف يمكنني مساعدتك؟", sender: "bot" },
     ]);
     localStorage.removeItem("salah-chat");
   };
@@ -194,57 +226,103 @@ export default function ChatBot() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-24 right-5 z-50 rounded-full bg-gold p-4 text-navy shadow-xl hover:bg-gold-dark transition-all"
+        className="fixed bottom-24 right-5 z-50 rounded-full bg-gold p-4 text-navy shadow-xl hover:bg-gold-dark transition-all hover:scale-110"
       >
         <FiMessageSquare size={24} />
       </button>
 
       {open && (
         <div className="fixed bottom-28 right-5 z-50 flex h-[500px] w-[350px] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-navy shadow-2xl">
+          
+          {/* رأس النافذة */}
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 p-4 bg-cream dark:bg-navy-lighter">
-            <h3 className="font-bold text-navy dark:text-white">مساعد صلاح بلس</h3>
+            <div className="flex items-center gap-2">
+              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-gold">
+                <img src="/logo-dark.png" alt="Bot" className="w-full h-full object-cover" />
+              </div>
+              <div>
+                <h3 className="font-bold text-navy dark:text-white text-sm">مساعد صلاح بلس</h3>
+                <span className="text-[10px] text-green-500 font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> متصل الآن
+                </span>
+              </div>
+            </div>
             <div className="flex gap-2 text-gray-500 dark:text-gray-400">
-              <button onClick={clearChat} title="مسح المحادثة" className="hover:text-red-500">
+              <button onClick={clearChat} title="مسح المحادثة" className="hover:text-red-500 transition-colors">
                 <FiTrash2 size={18} />
               </button>
-              <button onClick={() => setOpen(false)} className="hover:text-gold">
-                <FiX size={18} />
+              <button onClick={() => setOpen(false)} className="hover:text-gold transition-colors">
+                <FiX size={20} />
               </button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-cream/50 dark:bg-navy">
+          {/* منطقة الرسائل */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-cream/50 dark:bg-navy">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`rounded-xl p-3 max-w-[85%] text-sm leading-relaxed ${
-                  msg.sender === "user"
-                    ? "ml-auto bg-gold text-navy"
-                    : "bg-white dark:bg-navy-lighter text-navy dark:text-white border border-gray-100 dark:border-gray-700"
-                }`}
-              >
-                {msg.text}
+              <div key={index} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`rounded-2xl p-3 max-w-[85%] text-sm leading-relaxed whitespace-pre-line ${
+                    msg.sender === "user"
+                      ? "bg-gold text-navy rounded-tr-none shadow-sm"
+                      : "bg-white dark:bg-navy-lighter text-navy dark:text-white border border-gray-100 dark:border-gray-700 rounded-tl-none shadow-sm"
+                  }`}
+                >
+                  <p>{msg.text}</p>
+                  
+                  {/* زر الرابط التوجيهي */}
+                  {msg.link && (
+                    <Link
+                      href={msg.link.url}
+                      onClick={() => setOpen(false)}
+                      className="mt-3 flex items-center justify-center gap-2 bg-gold/10 text-gold hover:bg-gold hover:text-navy px-3 py-2 rounded-xl text-xs font-bold transition-colors"
+                    >
+                      {msg.link.text}
+                      <FiExternalLink size={14} />
+                    </Link>
+                  )}
+                </div>
               </div>
             ))}
+            
             {isTyping && (
-              <div className="rounded-xl p-3 max-w-[85%] bg-white dark:bg-navy-lighter text-gray-400 text-sm">
-                يكتب...
+              <div className="flex justify-start">
+                <div className="rounded-2xl rounded-tl-none p-3 bg-white dark:bg-navy-lighter border border-gray-100 dark:border-gray-700 text-gray-400 text-sm flex gap-1">
+                  <span className="animate-bounce">●</span>
+                  <span className="animate-bounce delay-100">●</span>
+                  <span className="animate-bounce delay-200">●</span>
+                </div>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
+          {/* الاقتراحات السريعة */}
+          <div className="px-3 py-2 bg-white dark:bg-navy-lighter border-t border-gray-100 dark:border-gray-800 flex gap-2 overflow-x-auto no-scrollbar">
+            {suggestions.map((suggestion, i) => (
+              <button
+                key={i}
+                onClick={() => sendMessage(suggestion)}
+                className="whitespace-nowrap text-xs bg-gray-100 dark:bg-navy text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:bg-gold hover:text-navy transition-colors"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+
+          {/* حقل الإدخال */}
           <div className="flex gap-2 border-t border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-navy-lighter">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
               placeholder="اكتب رسالتك..."
-              className="flex-1 rounded-lg border border-gray-200 dark:border-gray-600 px-3 py-2 bg-cream dark:bg-navy text-navy dark:text-white focus:outline-none focus:ring-2 focus:ring-gold"
+              className="flex-1 rounded-xl border border-gray-200 dark:border-gray-600 px-4 py-2.5 text-sm bg-cream dark:bg-navy text-navy dark:text-white focus:outline-none focus:ring-2 focus:ring-gold"
             />
             <button
-              onClick={sendMessage}
-              className="rounded-lg bg-gold px-4 py-2 text-navy hover:bg-gold-dark transition"
+              onClick={() => sendMessage(input)}
+              disabled={!input.trim()}
+              className="rounded-xl bg-gold px-4 py-2.5 text-navy hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FiSend size={18} />
             </button>
