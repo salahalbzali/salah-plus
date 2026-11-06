@@ -11,12 +11,17 @@ export function generateStaticParams() {
   }));
 }
 
-export default function ArticlePage({ params }: { params: { id: string } }) {
-  const article = articles.find((a) => a.id === params.id);
+export default async function ArticlePage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  const resolvedParams = await params;
+  const article = articles.find((a) => a.id === resolvedParams.id);
   
   if (!article) notFound();
 
-  const currentIndex = articles.findIndex((a) => a.id === params.id);
+  const currentIndex = articles.findIndex((a) => a.id === resolvedParams.id);
   const nextArticle = articles[currentIndex + 1] || null;
   const prevArticle = articles[currentIndex - 1] || null;
 
@@ -135,12 +140,13 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
                 );
               }
 
-              // القوائم النقطية
+              // القوائم النقطية (تم تصحيحها لتعمل بسلاسة دون أخطاء هيكلية DOM)
               if (trimmed.startsWith('- ')) {
                 return (
-                  <li key={i} className="mr-6 mb-3 text-lg sm:text-xl text-gray-700 dark:text-gray-300 list-disc marker:text-gold leading-relaxed">
-                    {renderText(trimmed.replace('- ', ''))}
-                  </li>
+                  <div key={i} className="flex items-start gap-3 mr-6 mb-3 text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <span className="text-gold font-bold mt-1">•</span>
+                    <div>{renderText(trimmed.replace('- ', ''))}</div>
+                  </div>
                 );
               }
 
