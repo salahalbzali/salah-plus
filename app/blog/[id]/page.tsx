@@ -1,10 +1,9 @@
 import { articles } from "@/lib/articles";
 import { notFound } from "next/navigation";
-import { FiCalendar, FiClock, FiArrowRight, FiArrowLeft, FiHome } from "react-icons/fi";
+import { FiCalendar, FiClock, FiArrowRight, FiArrowLeft } from "react-icons/fi";
 import { FaXTwitter, FaWhatsapp, FaFacebook } from "react-icons/fa6";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 export function generateStaticParams() {
   return articles.map((article) => ({
@@ -23,7 +22,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
 
   const shareUrl = `https://salah-plus-l7lb.vercel.app/blog/${article.id}`;
 
-  // 👈 دالة ذكية لتحويل النجوم (**) إلى نص عريض وذهبي
+  // دالة لتحويل النجوم إلى نص عريض
   const renderText = (text: string) => {
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, index) => {
@@ -37,17 +36,17 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-cream dark:bg-navy pt-20" dir="rtl">
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen bg-cream dark:bg-navy pt-24 pb-16" dir="rtl">
+        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* زر الرجوع إلى الرئيسية */}
           <div className="mb-6">
             <a
-              href="/"
+              href="/blog"
               className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-gold transition-colors"
             >
               <FiArrowRight />
-              <span>الرجوع إلى الصفحة الرئيسية</span>
+              <span>الرجوع إلى المدونة</span>
             </a>
           </div>
 
@@ -92,14 +91,13 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          {/* 👈 محتوى المقال بتنسيق ذكي (يتعرف على العناوين والإيموجي) */}
+          {/* محتوى المقال بتنسيق ذكي */}
           <div className="max-w-none mb-12">
             {article.content.split('\n').map((paragraph, i) => {
               const trimmed = paragraph.trim();
               if (!trimmed) return <div key={i} className="h-4"></div>;
 
-              // 1. العناوين التي تبدأ برقم وإيموجي (مثل: 💻 2. تعلم الأساسيات أو 1. المساعدات)
-              // هذا الشرط يبحث عن أي سطر يبدأ برقم، أو يبدأ بإيموجي ثم رقم
+              // العناوين المرقمة أو التي تحتوي على إيموجي
               if (/^(\d+\.|[^\w\s]+\s*\d+\.)/.test(trimmed) || trimmed === 'الخلاصة' || trimmed === 'المقدمة') {
                 return (
                   <h2 key={i} className="text-2xl sm:text-3xl font-black mt-10 mb-5 text-gold border-r-4 border-gold pr-4 bg-gold/5 py-2 rounded-l-lg">
@@ -108,7 +106,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
                 );
               }
 
-              // 2. العناوين التي تبدأ بـ ##
+              // العناوين التي تبدأ بـ ##
               if (trimmed.startsWith('## ')) {
                 return (
                   <h2 key={i} className="text-2xl sm:text-3xl font-black mt-10 mb-4 text-gold border-r-4 border-gold pr-4">
@@ -117,7 +115,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
                 );
               }
 
-              // 3. الأسئلة (التي تنتهي بعلامة استفهام)
+              // الأسئلة
               if (trimmed.endsWith('؟')) {
                 return (
                   <h3 key={i} className="text-xl sm:text-2xl font-bold mt-8 mb-4 text-gold">
@@ -126,7 +124,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
                 );
               }
 
-              // 4. الاقتباسات
+              // الاقتباسات
               if (trimmed.startsWith('> ')) {
                 return (
                   <blockquote key={i} className="border-r-4 border-gold bg-gold/5 rounded-xl px-6 py-5 my-5">
@@ -137,7 +135,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
                 );
               }
 
-              // 5. القوائم النقطية
+              // القوائم النقطية
               if (trimmed.startsWith('- ')) {
                 return (
                   <li key={i} className="mr-6 mb-3 text-lg sm:text-xl text-gray-700 dark:text-gray-300 list-disc marker:text-gold leading-relaxed">
@@ -146,7 +144,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
                 );
               }
 
-              // 6. الفقرات العادية
+              // الفقرات العادية
               return (
                 <p key={i} className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-loose mb-5">
                   {renderText(trimmed)}
@@ -158,28 +156,13 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
           {/* أيقونات التواصل الاجتماعي */}
           <div className="flex items-center justify-center gap-4 py-8 border-t border-b border-gray-200 dark:border-gray-700 mb-8">
             <span className="text-gray-500 dark:text-gray-400 text-sm">شارك المقال:</span>
-            <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white hover:scale-110 transition-transform"
-            >
+            <a href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white hover:scale-110 transition-transform">
               <FaFacebook />
             </a>
-            <a
-              href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${article.title}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white hover:scale-110 transition-transform"
-            >
+            <a href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${article.title}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white hover:scale-110 transition-transform">
               <FaXTwitter />
             </a>
-            <a
-              href={`https://wa.me/?text=${article.title}%20${shareUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white hover:scale-110 transition-transform"
-            >
+            <a href={`https://wa.me/?text=${article.title}%20${shareUrl}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white hover:scale-110 transition-transform">
               <FaWhatsapp />
             </a>
           </div>
@@ -187,10 +170,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
           {/* المقالات السابقة والتالية */}
           <div className="grid sm:grid-cols-2 gap-4">
             {nextArticle && (
-              <Link
-                href={`/blog/${nextArticle.id}`}
-                className="group p-4 rounded-xl bg-white dark:bg-navy-lighter border border-gray-200 dark:border-gray-700 hover:border-gold/30 transition-all"
-              >
+              <Link href={`/blog/${nextArticle.id}`} className="group p-4 rounded-xl bg-white dark:bg-navy-lighter border border-gray-200 dark:border-gray-700 hover:border-gold/30 transition-all">
                 <div className="flex items-center gap-2 text-gold text-sm mb-2">
                   <FiArrowRight />
                   <span>المقال التالي</span>
@@ -202,10 +182,7 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
             )}
             
             {prevArticle && (
-              <Link
-                href={`/blog/${prevArticle.id}`}
-                className="group p-4 rounded-xl bg-white dark:bg-navy-lighter border border-gray-200 dark:border-gray-700 hover:border-gold/30 transition-all sm:text-left text-right"
-              >
+              <Link href={`/blog/${prevArticle.id}`} className="group p-4 rounded-xl bg-white dark:bg-navy-lighter border border-gray-200 dark:border-gray-700 hover:border-gold/30 transition-all sm:text-left text-right">
                 <div className="flex items-center gap-2 text-gold text-sm mb-2 sm:justify-end justify-start">
                   <span>المقال السابق</span>
                   <FiArrowLeft />
@@ -218,7 +195,6 @@ export default function ArticlePage({ params }: { params: { id: string } }) {
           </div>
         </article>
       </div>
-      <Footer />
     </>
   );
 }
