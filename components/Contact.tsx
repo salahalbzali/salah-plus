@@ -144,25 +144,29 @@ export default function Contact() {
             <div className="bg-cream dark:bg-navy p-6 sm:p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
               <h3 className="text-lg sm:text-xl font-bold text-navy dark:text-white mb-4">تابعنا على</h3>
               <div className="flex gap-3">
+                {/* 👈 تم إصلاح الخطأ هنا باستخدام {const Icon = social.icon} */}
                 {[
                   { icon: FiFacebook, href: socialLinks.facebook, color: "#1877f2" },
                   { icon: FaXTwitter, href: socialLinks.x, color: "#000" },
                   { icon: FiInstagram, href: socialLinks.instagram, color: "#e4405f" },
                   { icon: FaWhatsapp, href: socialLinks.whatsapp, color: "#25d366" },
-                ].map((s) => (
-                  <motion.a
-                    key={s.href}
-                    href={s.href}
-                    target="_blank"
-                    whileHover={{ scale: 1.1, y: -3 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-12 h-12 rounded-xl bg-white dark:bg-navy-lighter flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-white shadow-sm transition-colors"
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = s.color; e.currentTarget.style.color = "white"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; e.currentTarget.style.color = ""; }}
-                  >
-                    <s.icon size={20} />
-                  </a>
-                ))}
+                ].map((social) => {
+                  const Icon = social.icon;
+                  return (
+                    <motion.a
+                      key={social.href}
+                      href={social.href}
+                      target="_blank"
+                      whileHover={{ scale: 1.1, y: -3 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-12 h-12 rounded-xl bg-white dark:bg-navy-lighter flex items-center justify-center text-gray-500 dark:text-gray-400 hover:text-white shadow-sm transition-colors"
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = social.color; e.currentTarget.style.color = "white"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; e.currentTarget.style.color = ""; }}
+                    >
+                      <Icon size={20} />
+                    </motion.a>
+                  );
+                })}
               </div>
             </div>
 
