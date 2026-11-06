@@ -4,12 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { portfolioItems } from "@/lib/data";
 import { FiExternalLink } from "react-icons/fi";
+import Link from "next/link"; // 👈 استيراد Link
 
 const categories = ["الكل", "هوية بصرية", "تصميم جرافيكي", "كتب تعليمية", "عروض تقديمية", "ذكاء اصطناعي", "خدمات مكتبية"];
 
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState("الكل");
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const filteredItems =
     activeCategory === "الكل"
@@ -64,39 +64,39 @@ export default function Portfolio() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
-                onMouseEnter={() => setHoveredId(item.id)}
-                onMouseLeave={() => setHoveredId(null)}
-                className="group relative rounded-2xl overflow-hidden bg-navy-gradient cursor-pointer aspect-[4/3]"
+                className="relative rounded-2xl overflow-hidden bg-navy-gradient cursor-pointer aspect-[4/3] group"
               >
-                <img
+                {/* 👈 ربط البطاقة بالكامل بصفحة التفاصيل */}
+                <Link href={`/portfolio/${item.id}`} className="block w-full h-full">
+                  <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
 
-                <motion.div
-                  animate={{ opacity: hoveredId === item.id ? 1 : 0 }}
-                  className="absolute inset-0 bg-navy/90 flex flex-col items-center justify-center p-4 sm:p-6 text-center transition-opacity duration-300"
-                >
-                  <span className="text-gold text-xs font-bold tracking-wider mb-2">
-                    {item.category}
-                  </span>
-                  <h3 className="text-white text-lg sm:text-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-gray-300 text-xs sm:text-sm mb-4">{item.description}</p>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
-                    {item.tags.map((tag) => (
-                      <span key={tag} className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs bg-gold/20 text-gold">
-                        {tag}
-                      </span>
-                    ))}
+                  {/* 👈 طبقة التفاصيل: تظهر دائماً في الجوال، وعند التمرير في الكمبيوتر */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/80 to-transparent lg:bg-navy/90 
+                                  flex flex-col items-center justify-center p-4 sm:p-6 text-center 
+                                  transition-opacity duration-300 opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
+                    <span className="text-gold text-xs font-bold tracking-wider mb-2">
+                      {item.category}
+                    </span>
+                    <h3 className="text-white text-lg sm:text-xl font-bold mb-2">{item.title}</h3>
+                    <p className="text-gray-300 text-xs sm:text-sm mb-4 line-clamp-2">{item.description}</p>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center mb-4">
+                      {item.tags.map((tag) => (
+                        <span key={tag} className="px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs bg-gold/20 text-gold">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    {/* الزر الأصفر (تحول إلى div لأن البطاقة كلها أصبحت Link) */}
+                    <div className="mt-2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gold flex items-center justify-center text-navy shadow-lg group-hover:scale-110 transition-transform">
+                      <FiExternalLink size={20} />
+                    </div>
                   </div>
-                  <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    className="mt-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gold flex items-center justify-center text-navy"
-                  >
-                    <FiExternalLink size={16} />
-                  </motion.button>
-                </motion.div>
+                </Link>
               </motion.div>
             ))}
           </AnimatePresence>
